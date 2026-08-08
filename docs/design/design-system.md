@@ -84,7 +84,7 @@ Buttons, tags, segmented controls, and single-line inputs use `999px` radii. Tex
 ## Page classes
 
 - `.wrap` centres content up to `--wrap` and applies `--edge` gutters.
-- `.section` adds three leading units of vertical padding. Add `.section-contrast` for a surface-coloured section.
+- `.section` adds three leading units of vertical padding. Add `.section-contrast` for a surface-coloured section. Cards inside a contrast section fall back to the page ground, because a surface card on a surface band has nothing to separate it.
 - `.eyebrow` is the small uppercase terracotta kicker placed before a heading.
 - `.section-heading` is a balanced 32px heading with no margin.
 - `.display` is the fluid hero heading, from 40px to 76px. Wrap each intended line in `<span class="line">...</span>` when the composition needs fixed line breaks.
@@ -103,7 +103,7 @@ Apply `.btn` to a native `<button>` or link, then add one variant:
 <button class="btn btn-ghost">Cancel</button>
 ```
 
-`.btn-primary` is solid terracotta, `.btn-secondary` is outlined, and `.btn-ghost` is a text-only accent action with no border. `.btn-icon` creates a 36px square icon button. `.btn-block` fills its container and adds top spacing. Disabled native buttons drop to 45% opacity.
+`.btn-primary` is solid terracotta, `.btn-secondary` is outlined, and `.btn-ghost` is a text-only accent action with no border. `.btn-icon` creates a 2.75rem square icon button. Organic specifies 36px, but the site holds every interactive target at the 44px minimum, so that decision wins here in the same way the focus ring does. `.btn-block` fills its container and adds top spacing. Disabled native buttons drop to 45% opacity.
 
 #### Button rename
 
@@ -227,6 +227,8 @@ Organic's role-colour architecture and 100–900 ramps were adopted, but populat
 ### Islamic geometric ornament wins
 
 `Arabesque.astro`, an eight-point star or octagram, and `Monogram.astro`, a square-Kufic "EY" in an octagonal frame, occupy decorative slots where Organic specifies circles and blobs. Organic's restriction against sharp corners and hairline-only geometry is overridden for ornament only. The rounded frame remains unchanged: buttons and inputs are pills, while cards and dialogs use `calc(var(--radius-lg) * 1.15)`.
+
+`Arabesque.astro` takes three variants. `divider` and `tile` emit a repeating SVG pattern at a fixed tile size, for strips and full-bleed backdrops. `mark` emits a single star at a caller-controlled `size` and `stroke`, which is what the repeating variants cannot do: it carries the hero medallion and the process step markers. All three are `aria-hidden` and take no pointer events.
 
 ### Arabic stays legible
 

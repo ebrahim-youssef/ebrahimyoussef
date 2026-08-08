@@ -154,6 +154,8 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .wrap { max-width: var(--wrap); margin-inline: auto; padding-inline: var(--edge); }
 .section { padding-block: calc(3 * var(--leading)); }
 .section-contrast { background: var(--color-surface); }
+/* a surface card on a surface band is invisible, so it steps to the page ground */
+.section-contrast .card { background: var(--color-bg); }
 
 /* Kickers and headings. The monospace utility face is gone: the system has two
    families, and the handoff's own lint config flags a third. */

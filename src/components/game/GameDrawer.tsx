@@ -14,7 +14,7 @@ export default function GameDrawer() {
 
   return (
     <>
-      <button type="button" className="btn btn-primary" onClick={open}>
+      <button type="button" className="btn btn-primary game-launch" onClick={open}>
         Play the game ✦
       </button>
       <dialog
