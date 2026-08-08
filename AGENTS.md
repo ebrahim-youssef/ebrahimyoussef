@@ -10,6 +10,8 @@ Manage the background server with `astro dev stop`, `astro dev status`, and `ast
 
 ## Documentation
 
+The styling source of truth is [`docs/design/design-system.md`](docs/design/design-system.md).
+
 Full documentation: https://docs.astro.build
 
 Consult these guides before working on related tasks:

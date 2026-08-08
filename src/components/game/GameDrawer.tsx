@@ -27,7 +27,7 @@ export default function GameDrawer() {
       >
         <button
           type="button"
-          className="drawer-close"
+          className="btn btn-ghost btn-icon drawer-close"
           onClick={() => ref.current?.close()}
           aria-label="Close game"
         >

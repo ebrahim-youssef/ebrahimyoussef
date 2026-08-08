@@ -1,13 +1,16 @@
 ---
 // Decorative 8-point-star geometric motif, echoing the monogram's octagon
-// frame. Two variants:
+// frame. Three variants:
 //   divider — a thin horizontal strip of repeating star line-work.
 //   tile    — a faint full-bleed pattern block for section backdrops.
-// Both are purely decorative: aria-hidden, no semantic content.
+//   mark    — one standalone star at a caller-controlled size and colour.
+// All are purely decorative: aria-hidden, no semantic content.
 interface Props {
-  variant: 'divider' | 'tile';
+  variant: 'divider' | 'tile' | 'mark';
+  size?: number;
+  stroke?: string;
 }
-const { variant } = Astro.props;
+const { variant, size = 18, stroke = 'currentColor' } = Astro.props;
 
 // 8-point star outline (16 alternating outer/inner vertices), as an SVG
 // "points" string, pointing straight up.
@@ -31,6 +34,7 @@ const patternId = `ey-arabesque-${variant}-${uid}`;
 const dividerStar = starPoints(16, 12, 7.5, 3);
 // tile: a slightly larger, sparser 2D-repeating tile
 const tileStar = starPoints(24, 24, 8, 3.2);
+const markStar = starPoints(50, 50, 46, 18.4);
 ---
 
 {
@@ -38,19 +42,31 @@ const tileStar = starPoints(24, 24, 8, 3.2);
     <svg class="ey-arabesque ey-arabesque-divider" role="presentation" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <pattern id={patternId} width="32" height="24" patternUnits="userSpaceOnUse">
-          <polygon points={dividerStar} fill="none" stroke="#e4d3a1" stroke-width="1.5" stroke-linejoin="round" />
+          <polygon points={dividerStar} fill="none" stroke="var(--color-accent-2-300)" stroke-width="1.5" stroke-linejoin="round" />
+        </pattern>
+      </defs>
+      <rect width="100%" height="100%" fill={`url(#${patternId})`} />
+    </svg>
+  ) : variant === 'tile' ? (
+    <svg class="ey-arabesque ey-arabesque-tile" role="presentation" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <pattern id={patternId} width="48" height="48" patternUnits="userSpaceOnUse">
+          <polygon points={tileStar} fill="none" stroke="var(--color-accent)" stroke-width="1.5" stroke-linejoin="round" />
         </pattern>
       </defs>
       <rect width="100%" height="100%" fill={`url(#${patternId})`} />
     </svg>
   ) : (
-    <svg class="ey-arabesque ey-arabesque-tile" role="presentation" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <pattern id={patternId} width="48" height="48" patternUnits="userSpaceOnUse">
-          <polygon points={tileStar} fill="none" stroke="#c05c21" stroke-width="1.5" stroke-linejoin="round" />
-        </pattern>
-      </defs>
-      <rect width="100%" height="100%" fill={`url(#${patternId})`} />
+    <svg
+      class="ey-arabesque ey-arabesque-mark"
+      width={size}
+      height={size}
+      viewBox="0 0 100 100"
+      role="presentation"
+      aria-hidden="true"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <polygon points={markStar} fill="none" stroke={stroke} stroke-width="4" stroke-linejoin="round" />
     </svg>
   )
 }

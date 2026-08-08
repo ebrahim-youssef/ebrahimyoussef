@@ -43,7 +43,7 @@ export default function WriteMode({ target, onAnswer }: WriteModeProps) {
           <button className="btn btn-primary" type="submit">
             Check
           </button>
-          <button type="button" className="link-quiet" onClick={giveUp}>
+          <button type="button" className="btn btn-ghost" onClick={giveUp}>
             Show me
           </button>
         </div>

@@ -6,28 +6,31 @@ import { SITE } from '../data/site';
 
 <section class="hero" id="top" aria-labelledby="hero-title">
   <Arabesque variant="tile" />
+  <div class="hero-mark"><Arabesque variant="mark" size={420} stroke="var(--color-accent-2)" /></div>
   <div class="hero-watermark" aria-hidden="true"><Monogram size={420} /></div>
   <div class="wrap hero-inner">
     <p class="eyebrow">{SITE.role} · Available for selected projects</p>
-    <h1 id="hero-title">{SITE.tagline}</h1>
+    <h1 id="hero-title" class="display"><span class="line">{SITE.tagline}</span></h1>
     <p class="hero-copy">From focused business websites to production-ready interfaces, I turn ideas into accessible experiences that are easy to use and maintain.</p>
     <div class="hero-actions" aria-label="Contact options">
-      <a class="button button-primary" href={SITE.emailUrl}>Email me about a project</a>
-      <a class="button button-secondary" href={SITE.bookingUrl}>Book a call</a>
+      <a class="btn btn-primary" href={SITE.emailUrl}>Email me about a project</a>
+      <a class="btn btn-secondary" href={SITE.bookingUrl}>Book a call</a>
     </div>
     <a class="work-link" href="#work">See selected work <span aria-hidden="true">↓</span></a>
   </div>
 </section>
 
 <style>
-  .hero { position: relative; min-height: min(47rem, 82vh); display: grid; align-items: center; overflow: hidden; border-bottom: 1px solid var(--line); }
-  .hero-inner { position: relative; z-index: 2; width: 100%; padding-block: clamp(5rem, 12vw, 9rem); }
-  .hero-watermark { position: absolute; right: max(-7rem, -8vw); top: 50%; translate: 0 -50%; opacity: .075; rotate: 7deg; }
-  h1 { max-width: 16ch; margin: 0; font-size: var(--step-6); font-weight: 740; letter-spacing: -.055em; line-height: .98; text-wrap: balance; }
-  .hero-copy { max-width: 51ch; margin: 1.7rem 0 0; color: var(--ink-soft); font-size: var(--step-1); }
-  .hero-actions { display: flex; flex-wrap: wrap; gap: .8rem; margin-top: 2rem; }
-  .work-link { display: inline-flex; gap: .55rem; margin-top: 3.5rem; color: var(--ink); font-size: .88rem; font-weight: 650; text-underline-offset: .35rem; }
+  .hero { position: relative; isolation: isolate; overflow: hidden; }
+  .hero-inner { position: relative; z-index: 2; padding-block: calc(4 * var(--leading)) calc(3 * var(--leading)); }
+  /* the medallion sits back like the monogram watermark, not on top of the copy */
+  .hero-mark { position: absolute; z-index: -1; right: -8rem; top: calc(-2 * var(--leading)); opacity: .12; pointer-events: none; }
+  .hero-watermark { position: absolute; z-index: 1; right: max(-7rem, -8vw); top: 50%; translate: 0 -50%; opacity: .075; rotate: 7deg; }
+  h1 { max-width: 16ch; margin-block: 0; text-wrap: balance; }
+  .hero-copy { max-width: var(--measure); margin: var(--leading) 0 0; color: var(--color-neutral-700); }
+  .hero-actions { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--leading); }
+  .work-link { display: inline-flex; gap: var(--space-2); margin-top: calc(1.5 * var(--leading)); color: var(--color-text); font-size: .88rem; font-weight: 650; text-underline-offset: .35rem; }
   :global(.hero > .ey-arabesque-tile) { opacity: .035; }
-  @media (max-width: 48rem) { .hero { min-height: auto; } .hero-watermark { right: -13rem; opacity: .055; } }
-  @media (max-width: 30rem) { .hero-actions .button { width: 100%; } }
+  @media (max-width: 48rem) { .hero-mark { right: -14rem; } .hero-watermark { right: -13rem; opacity: .055; } }
+  @media (max-width: 30rem) { .hero-inner { padding-top: calc(2.5 * var(--leading)); } .hero-actions .btn { width: 100%; } }
 </style>

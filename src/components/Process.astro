@@ -1,4 +1,5 @@
 ---
+import Arabesque from './Arabesque.astro';
 import { SITE } from '../data/site';
 ---
 
@@ -8,8 +9,11 @@ import { SITE } from '../data/site';
     <h2 id="process-title" class="section-heading process-title">How we get from idea to launch</h2>
     <ol class="process-list">
       {SITE.process.map((step, index) => (
-        <li>
-          <span class="step-number">{String(index + 1).padStart(2, '0')}</span>
+        <li class="card elev-sm">
+          <div class="step-marker">
+            <Arabesque variant="mark" size={18} stroke="var(--color-accent)" />
+            <span class="step-number">{String(index + 1).padStart(2, '0')}</span>
+          </div>
           <h3>{step.name}</h3>
           <p>{step.body}</p>
         </li>
@@ -20,13 +24,12 @@ import { SITE } from '../data/site';
 
 <style>
   .process-title { max-width: 15ch; }
-  .process-list { display: grid; grid-template-columns: repeat(4, 1fr); margin: 3.5rem 0 0; padding: 0; list-style: none; border-top: 1px solid var(--line-strong); }
-  li { position: relative; padding: 2rem 1.5rem 0 0; border-right: 1px solid var(--line); }
-  li + li { padding-left: 1.5rem; }
-  li:last-child { border-right: 0; }
-  .step-number { display: block; margin-bottom: 3.5rem; color: var(--terra-deep); font: 650 .78rem/1 var(--font-utility); }
-  h3 { margin: 0 0 .65rem; font-size: var(--step-1); }
-  li p { margin: 0; color: var(--ink-soft); font-size: .95rem; }
-  @media (max-width: 48rem) { .process-list { grid-template-columns: repeat(2, 1fr); } li { padding-bottom: 2rem; } .step-number { margin-bottom: 1.5rem; } }
-  @media (max-width: 28rem) { .process-list { grid-template-columns: 1fr; } li, li + li { padding: 1.5rem 0; border-right: 0; border-bottom: 1px solid var(--line); } .step-number { margin-bottom: .8rem; } }
+  .process-list { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--leading); margin: calc(2 * var(--leading)) 0 0; padding: 0; list-style: none; }
+  li { padding: var(--leading); }
+  .step-marker { display: flex; align-items: center; gap: var(--space-2); margin-bottom: var(--leading); }
+  .step-number { color: var(--color-accent-700); font-size: 11px; font-weight: 600; letter-spacing: .1em; line-height: 1; text-transform: uppercase; }
+  h3 { margin: 0 0 var(--space-2); }
+  li p { max-width: var(--measure); margin: 0; color: var(--color-neutral-700); }
+  @media (max-width: 48rem) { .process-list { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 28rem) { .process-list { grid-template-columns: 1fr; } }
 </style>

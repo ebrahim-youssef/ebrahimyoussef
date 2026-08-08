@@ -71,10 +71,10 @@ export default function EndScreen({
         <button type="button" className="btn btn-primary" onClick={handleShare} disabled={sharing}>
           {sharing ? 'Preparing…' : 'Share'}
         </button>
-        <button type="button" className="btn btn-ghost" onClick={onPlayAgain}>
+        <button type="button" className="btn btn-secondary" onClick={onPlayAgain}>
           Play again
         </button>
-        <button type="button" className="link-quiet" onClick={onSwitchMode}>
+        <button type="button" className="btn btn-ghost" onClick={onSwitchMode}>
           Switch mode
         </button>
       </div>
