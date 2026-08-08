@@ -206,7 +206,7 @@ Apply `.table` to a semantic table with `<thead>`, `<tbody>`, `<th>`, and `<td>`
 
 `.hr` is a one-pixel divider using `--color-divider`, but should be avoided. Separate sections with whitespace.
 
-`.washed` applies the system's photograph treatment directly to an image or image wrapper: reduced saturation and contrast, raised brightness, and slight opacity. It is currently unused because the site has no photographs. Apply it to content photographs when they arrive.
+`.washed` applies the system's photograph treatment directly to an image or image wrapper: reduced saturation and contrast, raised brightness, and slight opacity. The About portrait uses it, on a wrapper that also carries the card radius and `overflow: hidden`. Every content photograph goes through it, so photographs sit back into the warm page instead of on top of it. Images are served through Astro's `<Image>`, which emits responsive webp from a single master under `src/assets/`.
 
 ### Icons
 
