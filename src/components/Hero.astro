@@ -1,36 +1,76 @@
 ---
+import { Image } from 'astro:assets';
 import Arabesque from './Arabesque.astro';
-import Monogram from './Monogram.astro';
+import portrait from '../assets/ebrahim-cutout.png';
 import { SITE } from '../data/site';
 ---
 
 <section class="hero" id="top" aria-labelledby="hero-title">
   <Arabesque variant="tile" />
-  <div class="hero-mark"><Arabesque variant="mark" size={420} stroke="var(--color-accent-2)" /></div>
-  <div class="hero-watermark" aria-hidden="true"><Monogram size={420} /></div>
   <div class="wrap hero-inner">
-    <p class="eyebrow">{SITE.role} · Available for selected projects</p>
-    <h1 id="hero-title" class="display"><span class="line">{SITE.tagline}</span></h1>
-    <p class="hero-copy">From focused business websites to production-ready interfaces, I turn ideas into accessible experiences that are easy to use and maintain.</p>
-    <div class="hero-actions" aria-label="Contact options">
-      <a class="btn btn-primary" href={SITE.emailUrl}>Email me about a project</a>
-      <a class="btn btn-secondary" href={SITE.bookingUrl}>Book a call</a>
+    <div class="hero-copy-col">
+      <p class="eyebrow">{SITE.role} · Available for selected projects</p>
+      <h1 id="hero-title" class="display"><span class="line">{SITE.tagline}</span></h1>
+      <p class="hero-copy">From focused business websites to production-ready interfaces, I turn ideas into accessible experiences that are easy to use and maintain.</p>
+      <div class="hero-actions" aria-label="Contact options">
+        <a class="btn btn-primary" href={SITE.emailUrl}>Email me about a project</a>
+        <a class="btn btn-secondary" href={SITE.bookingUrl}>Book a call</a>
+      </div>
+      <a class="work-link" href="#work">See selected work <span aria-hidden="true">↓</span></a>
     </div>
-    <a class="work-link" href="#work">See selected work <span aria-hidden="true">↓</span></a>
+    <figure class="hero-portrait">
+      <div class="hero-portrait-mark"><Arabesque variant="mark" size={400} stroke="var(--color-accent-2-600)" /></div>
+      <Image
+        src={portrait}
+        alt={SITE.name}
+        widths={[360, 540, 720, 900]}
+        sizes="(max-width: 64rem) 20rem, 26rem"
+        loading="eager"
+        fetchpriority="high"
+      />
+    </figure>
   </div>
 </section>
 
 <style>
   .hero { position: relative; isolation: isolate; overflow: hidden; }
-  .hero-inner { position: relative; z-index: 2; padding-block: calc(4 * var(--leading)) calc(3 * var(--leading)); }
-  /* the medallion sits back like the monogram watermark, not on top of the copy */
-  .hero-mark { position: absolute; z-index: -1; right: -8rem; top: calc(-2 * var(--leading)); opacity: .12; pointer-events: none; }
-  .hero-watermark { position: absolute; z-index: 1; right: max(-7rem, -8vw); top: 50%; translate: 0 -50%; opacity: .075; rotate: 7deg; }
+  .hero-inner {
+    position: relative; z-index: 2;
+    display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, .7fr);
+    gap: var(--leading) clamp(24px, 4vw, 72px); align-items: center;
+    padding-block: calc(4 * var(--leading)) calc(3 * var(--leading));
+  }
+
   h1 { max-width: 16ch; margin-block: 0; text-wrap: balance; }
   .hero-copy { max-width: var(--measure); margin: var(--leading) 0 0; color: var(--color-neutral-700); }
   .hero-actions { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--leading); }
   .work-link { display: inline-flex; gap: var(--space-2); margin-top: calc(1.5 * var(--leading)); color: var(--color-text); font-size: .88rem; font-weight: 650; text-underline-offset: .35rem; }
+
+  /* The portrait stands in a gold shape, with the head breaking past its top edge.
+     Organic asks for soft shapes as imagery masks; the octagram behind it is the
+     ornament layer, which is where the geometry belongs. */
+  .hero-portrait { position: relative; justify-self: end; width: min(100%, 26rem); aspect-ratio: 1; margin: 0; }
+  .hero-portrait::before {
+    content: ''; position: absolute; bottom: 0; left: 6%; width: 88%; aspect-ratio: 1;
+    border-radius: 50%; background: var(--color-accent-2-300);
+  }
+  .hero-portrait-mark { position: absolute; inset: 8% 0 0; display: grid; place-items: center; opacity: .22; pointer-events: none; }
+  /* the source is a cutout, so its shoulders end on a straight edge. Fading the
+     lower third lets the subject rise out of the gold shape instead of being
+     sliced off by it. */
+  .hero-portrait :global(img) {
+    position: absolute; bottom: 0; left: -4%; width: 108%; height: auto;
+    mask-image: linear-gradient(to bottom, #000 62%, transparent 94%);
+  }
+
   :global(.hero > .ey-arabesque-tile) { opacity: .035; }
-  @media (max-width: 48rem) { .hero-mark { right: -14rem; } .hero-watermark { right: -13rem; opacity: .055; } }
-  @media (max-width: 30rem) { .hero-inner { padding-top: calc(2.5 * var(--leading)); } .hero-actions .btn { width: 100%; } }
+
+  @media (max-width: 64rem) {
+    .hero-inner { grid-template-columns: 1fr; justify-items: start; }
+    .hero-portrait { justify-self: start; width: min(100%, 20rem); }
+  }
+  @media (max-width: 30rem) {
+    .hero-inner { padding-top: calc(2.5 * var(--leading)); }
+    .hero-actions .btn { width: 100%; }
+  }
 </style>
