@@ -1,70 +1,310 @@
+/* Organic design system — see docs/design/design-system.md
+   Tokens and component layer derived from docs/design/organic-handoff/project/styles.css.
+   Three standing overrides: the palette, the Islamic geometric ornament, and Arabic type. */
+
+@import '@fontsource/caprasimo/index.css';
+@import '@fontsource-variable/figtree/index.css';
 @import '@fontsource-variable/rubik/index.css';
 
 :root {
-  --base: #faf6ef;
-  --surface: #f1e9db;
-  --surface-strong: #e8ddca;
-  --ink: #2b2118;
-  --ink-soft: #5c5040;
-  --terra: #c05c21;
-  --terra-deep: #8a3b17;
-  --terra-hover: #713013;
-  --gold: #b68725;
-  --gold-soft: #e4d3a1;
-  --line: rgb(43 33 24 / .12);
-  --line-strong: rgb(43 33 24 / .24);
-  --font: 'Rubik Variable', system-ui, sans-serif;
-  --font-utility: ui-monospace, 'SFMono-Regular', Consolas, monospace;
-  --step--1: clamp(.78rem, .75rem + .12vw, .85rem);
-  --step-0: clamp(1rem, .96rem + .2vw, 1.1rem);
-  --step-1: clamp(1.12rem, 1.04rem + .4vw, 1.32rem);
-  --step-2: clamp(1.35rem, 1.17rem + .9vw, 1.82rem);
-  --step-3: clamp(1.75rem, 1.43rem + 1.6vw, 2.6rem);
-  --step-4: clamp(2.2rem, 1.68rem + 2.6vw, 3.55rem);
-  --step-5: clamp(2.8rem, 2rem + 4vw, 4.9rem);
-  --step-6: clamp(3.25rem, 2.2rem + 5.5vw, 6.6rem);
-  --content-w: 72rem;
-  --section-pad: clamp(4.5rem, 10vw, 8rem);
+  /* Roles */
+  --color-bg: #faf6ef;
+  --color-surface: #f1e9db;
+  --color-text: #2b2118;
+  --color-accent: #c05c21;
+  --color-accent-2: #b68725;
+  --color-accent-3: #7a8a5e;
+  --color-divider: color-mix(in srgb, var(--color-text) 16%, transparent);
+
+  /* Neutral ramp */
+  --color-neutral-100: #faf3ee;
+  --color-neutral-200: #f1e6dc;
+  --color-neutral-300: #dfd1c5;
+  --color-neutral-400: #c4b4a7;
+  --color-neutral-500: #a59588;
+  --color-neutral-600: #85776b;
+  --color-neutral-700: #665b51;
+  --color-neutral-800: #4a4139;
+  --color-neutral-900: #302a26;
+
+  /* Accent ramp — terracotta */
+  --color-accent-100: #fff2ec;
+  --color-accent-200: #ffe1d2;
+  --color-accent-300: #ffc5aa;
+  --color-accent-400: #ff9a66;
+  --color-accent-500: #df7841;
+  --color-accent-600: #ba5b25;
+  --color-accent-700: #934312;
+  --color-accent-800: #692f0c;
+  --color-accent-900: #43210e;
+
+  /* Accent-2 ramp — gold */
+  --color-accent-2-100: #fbf4e9;
+  --color-accent-2-200: #f5e6cc;
+  --color-accent-2-300: #eed09c;
+  --color-accent-2-400: #deaf59;
+  --color-accent-2-500: #bf8f2f;
+  --color-accent-2-600: #9d7109;
+  --color-accent-2-700: #7a5600;
+  --color-accent-2-800: #573d00;
+  --color-accent-2-900: #382809;
+
+  /* Accent-3 ramp — sage, verbatim from the handoff, tertiary */
+  --color-accent-3-100: #f0fae1;
+  --color-accent-3-200: #e1eecc;
+  --color-accent-3-300: #ccdbb2;
+  --color-accent-3-400: #aebf92;
+  --color-accent-3-500: #8fa073;
+  --color-accent-3-600: #728157;
+  --color-accent-3-700: #56633f;
+  --color-accent-3-800: #3d472b;
+  --color-accent-3-900: #272e1b;
+
+  /* Type — Rubik trails both stacks so Arabic glyphs resolve by per-glyph fallback */
+  --font-heading: 'Caprasimo', 'Rubik Variable', system-ui, sans-serif;
+  --font-heading-weight: 400;
+  --font-body: 'Figtree Variable', 'Rubik Variable', system-ui, sans-serif;
+
+  /* Spacing — 4px base at 1.10x density; the scale skips 5 and 7 */
+  --space-1: 4.4px;
+  --space-2: 8.8px;
+  --space-3: 13.2px;
+  --space-4: 17.6px;
+  --space-6: 26.4px;
+  --space-8: 35.2px;
+
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 28px;
+
+  --shadow-sm: 0 1px 2px color-mix(in srgb, var(--color-neutral-900) 14%, transparent);
+  --shadow-md: 0 3px 10px color-mix(in srgb, var(--color-neutral-900) 16%, transparent);
+  --shadow-lg: 0 12px 32px color-mix(in srgb, var(--color-neutral-900) 22%, transparent);
+
+  /* Page scaffolding — from the handoff's landing template; section rhythm is
+     expressed in multiples of --leading, which --space-* is too small to carry */
+  --leading: 28px;
+  --half: 14px;
+  --edge: clamp(20px, 5vw, 72px);
+  --measure: 58ch;
+  --wrap: 1200px;
+
+  /* Kept from the previous system: the handoff specifies neither */
   --focus: #7040a0;
-  --r-md: .625rem;
-  --r-lg: 1.125rem;
-  --shadow-lift: 0 .75rem 2.5rem rgb(43 33 24 / .14);
   --ease-spring: cubic-bezier(.34, 1.4, .64, 1);
 }
 
-* { box-sizing: border-box; }
+/* Base */
+*, *::before, *::after { box-sizing: border-box; }
 html { color-scheme: light; scroll-behavior: smooth; scroll-padding-top: 1rem; }
-body { margin: 0; overflow-x: hidden; background: var(--base); color: var(--ink); font-family: var(--font); font-size: var(--step-0); line-height: 1.6; -webkit-font-smoothing: antialiased; }
-main { display: block; }
-h1, h2, h3 { line-height: 1.08; }
-a { color: var(--terra-deep); }
-button, a { -webkit-tap-highlight-color: transparent; }
-button, input { font: inherit; }
-:focus-visible { outline: 3px solid var(--focus); outline-offset: 4px; }
-[dir='rtl'] { font-family: var(--font); }
 
-.skip-link { position: fixed; inset-inline-start: 1rem; top: -5rem; z-index: 1000; padding: .7rem 1rem; background: var(--ink); color: var(--base); font-weight: 650; }
-.skip-link:focus { top: 1rem; }
-.wrap { width: min(100% - 2.5rem, var(--content-w)); margin-inline: auto; }
-.section { padding-block: var(--section-pad); }
-.section-rule { border-top: 1px solid var(--line); }
-.section-contrast { background: var(--surface); }
-.eyebrow { margin: 0 0 1rem; color: var(--terra-deep); font: 650 var(--step--1)/1.3 var(--font-utility); letter-spacing: .075em; text-transform: uppercase; }
-.section-heading { margin: 0; font-size: var(--step-4); font-weight: 710; letter-spacing: -.045em; text-wrap: balance; }
-
-.button, .btn { min-height: 2.8rem; display: inline-flex; align-items: center; justify-content: center; gap: .5rem; padding: .75rem 1.15rem; border: 1px solid transparent; border-radius: 0; font-weight: 650; line-height: 1.2; text-align: center; text-decoration: none; cursor: pointer; transition: background-color .18s ease, border-color .18s ease, color .18s ease, translate .18s ease; }
-.button-primary, .btn-primary { background: var(--terra-deep); color: #fffaf3; }
-.button-secondary, .btn-ghost { border-color: var(--line-strong); background: transparent; color: var(--ink); }
-
-@media (hover: hover) and (pointer: fine) {
-  .button-primary:hover, .btn-primary:hover { background: var(--terra-hover); }
-  .button-secondary:hover, .btn-ghost:hover { border-color: var(--ink); background: rgb(255 255 255 / .25); }
-  .button:hover, .btn:hover { translate: 0 -2px; }
+body {
+  margin: 0;
+  overflow-x: clip;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.55;
+  text-wrap: pretty;
+  -webkit-font-smoothing: antialiased;
 }
 
-@media (max-width: 30rem) { .wrap { width: min(100% - 1.5rem, var(--content-w)); } }
+main { display: block; }
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: var(--font-heading-weight);
+  line-height: 1.12;
+  letter-spacing: -0.015em;
+  margin: 0 0 var(--space-2);
+}
+h1 { font-size: 42px; }
+h2 { font-size: 32px; }
+h3 { font-size: 25px; }
+h4 { font-size: 20px; }
+h5 { font-size: 16px; }
+h6 { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; }
+
+p { margin: 0 0 var(--space-3); }
+a { color: var(--color-accent-700); text-underline-offset: 3px; }
+img { display: block; max-width: 100%; }
+figure { margin: 0; }
+figcaption { margin-top: var(--space-1); font-size: 11px; color: var(--color-neutral-700); }
+button, input, textarea, select { font: inherit; }
+button, a { -webkit-tap-highlight-color: transparent; }
+
+.text-muted { color: var(--color-neutral-700); }
+::selection { background: color-mix(in srgb, var(--color-accent) 30%, transparent); }
+
+/* Focus stays the previous system's purple at 3px: it is a palette colour, and the
+   width was a deliberate accessibility decision the handoff has no bearing on. */
+:focus { outline: none; }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 4px; }
+
+/* Page furniture */
+.skip-link {
+  position: fixed; inset-inline-start: 1rem; top: -5rem; z-index: 1000;
+  padding: .7rem 1rem; border-radius: 999px;
+  background: var(--color-text); color: var(--color-bg); font-weight: 600;
+}
+.skip-link:focus { top: 1rem; }
+
+.wrap { max-width: var(--wrap); margin-inline: auto; padding-inline: var(--edge); }
+.section { padding-block: calc(3 * var(--leading)); }
+.section-contrast { background: var(--color-surface); }
+/* a surface card on a surface band is invisible, so it steps to the page ground */
+.section-contrast .card { background: var(--color-bg); }
+
+/* Kickers and headings. The monospace utility face is gone: the system has two
+   families, and the handoff's own lint config flags a third. */
+.eyebrow {
+  margin: 0 0 var(--space-3);
+  font-size: 11px; font-weight: 600; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--color-accent-700);
+}
+.section-heading { margin: 0; font-size: 32px; text-wrap: balance; }
+
+/* The base type scale is fixed px by design; the display headline is the one
+   fluid exception, per the handoff's landing template. */
+.display {
+  font-family: var(--font-heading);
+  font-weight: var(--font-heading-weight);
+  font-size: clamp(40px, 5.8vw, 76px);
+  line-height: clamp(43px, 6.26vw, 82px);
+  letter-spacing: -0.015em;
+  margin-left: -0.028em;
+}
+.display .line { display: block; }
+
+/* Buttons */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  min-height: 2.8rem;
+  padding: var(--space-2) calc(var(--space-3) * 1.2);
+  border: 1px solid transparent;
+  font-family: var(--font-heading); font-weight: var(--font-heading-weight);
+  font-size: 14px; line-height: 1.2;
+  color: var(--color-text); background: transparent;
+  text-decoration: none; cursor: pointer;
+  transition: background-color .18s ease, border-color .18s ease, color .18s ease;
+}
+.btn svg { display: block; }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+
+.btn-primary { background: var(--color-accent); color: var(--color-bg); }
+.btn-primary:hover { background: var(--color-accent-600); }
+.btn-primary:active { background: var(--color-accent-700); }
+
+.btn-secondary { border-color: var(--color-divider); }
+.btn-secondary:hover { background: color-mix(in srgb, var(--color-text) 7%, transparent); }
+.btn-secondary:active { background: color-mix(in srgb, var(--color-text) 14%, transparent); }
+
+.btn-ghost { color: var(--color-accent-700); padding-inline: var(--space-1); }
+.btn-ghost:hover { background: color-mix(in srgb, var(--color-accent) 10%, transparent); }
+.btn-ghost:active { background: color-mix(in srgb, var(--color-accent) 18%, transparent); }
+
+/* Organic sizes icon buttons at 36px. Kept at 44px: the repo deliberately raised
+   interactive targets to the 2.5.8 minimum, and that decision outranks the spec. */
+.btn-icon { width: 2.75rem; min-height: 2.75rem; height: 2.75rem; padding: 0; }
+.btn-block { width: 100%; margin-top: var(--space-2); }
+
+/* Tags */
+.tag { display: inline-flex; align-items: center; padding: 3px 10px; font-size: 11px; letter-spacing: .02em; }
+.tag-accent { background: var(--color-accent-100); color: var(--color-accent-800); }
+.tag-accent-2 { background: var(--color-accent-2-100); color: var(--color-accent-2-800); }
+.tag-accent-3 { background: var(--color-accent-3-100); color: var(--color-accent-3-800); }
+.tag-neutral { background: var(--color-neutral-100); color: var(--color-neutral-800); }
+.tag-outline { border: 1px solid var(--color-accent); color: var(--color-accent-700); }
+
+/* Forms */
+.field > label { display: block; margin-bottom: 5px; font-size: 12px; color: var(--color-neutral-700); }
+.input {
+  width: 100%; min-height: 36px; padding: 6px 10px;
+  font: inherit; font-size: 14px; color: var(--color-text); caret-color: var(--color-accent);
+  background: var(--color-surface); border: 1px solid var(--color-divider);
+}
+.input:hover { border-color: var(--color-neutral-600); }
+.input:focus-visible { border-color: var(--color-accent); }
+textarea.input { min-height: 90px; resize: vertical; border-radius: var(--radius-md); }
+
+.radio { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer; }
+.radio input, .seg-opt input { position: absolute; width: 0; height: 0; opacity: 0; pointer-events: none; }
+.radio .dot { width: 16px; height: 16px; flex: none; border-radius: 50%; border: 1.5px solid var(--color-divider); }
+.radio:hover .dot { border-color: var(--color-accent); }
+.radio input:checked + .dot {
+  border-color: var(--color-accent); background: var(--color-accent);
+  box-shadow: inset 0 0 0 4px var(--color-bg);
+}
+.radio input:focus-visible + .dot { outline: 3px solid var(--focus); outline-offset: 4px; }
+
+.seg { display: inline-flex; overflow: hidden; border: 1px solid var(--color-divider); }
+.seg-opt { display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px; font-size: 13px; cursor: pointer; }
+.seg-opt + .seg-opt { border-left: 1px solid var(--color-divider); }
+.seg-opt:has(input:checked) { background: var(--color-accent); color: var(--color-bg); }
+.seg-opt:not(:has(input:checked)):hover { background: color-mix(in srgb, var(--color-text) 7%, transparent); }
+.seg-opt:has(input:focus-visible) { outline: 3px solid var(--focus); outline-offset: -3px; }
+
+/* Cards */
+.card {
+  display: flex; flex-direction: column; gap: var(--space-2);
+  padding: var(--space-3); background: var(--color-surface);
+}
+.card-kicker { font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--color-accent-700); }
+.card-title { font-family: var(--font-heading); font-weight: var(--font-heading-weight); font-size: 17px; line-height: 1.2; }
+.card-body { margin: 0; font-size: 13px; color: var(--color-neutral-700); flex: 1; }
+.card-meta { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--color-neutral-600); }
+
+.elev-sm { box-shadow: var(--shadow-sm); }
+.elev-md { box-shadow: var(--shadow-md); }
+.elev-lg { box-shadow: var(--shadow-lg); }
+
+/* Navigation */
+.nav { display: flex; align-items: center; gap: var(--space-4); padding: var(--space-3) var(--space-4); border-bottom: none; }
+.nav-brand { margin-right: auto; font-family: var(--font-heading); font-weight: var(--font-heading-weight); font-size: 18px; }
+.nav a { color: inherit; text-decoration: none; font-size: 14px; }
+.nav a:hover, .nav a[aria-current='page'] { color: var(--color-accent-700); }
+
+/* Table */
+.table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.table th {
+  padding: var(--space-2); text-align: left;
+  font-size: 11px; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--color-neutral-700); border-bottom: 1px solid var(--color-divider);
+}
+.table td { padding: var(--space-2); border-bottom: 1px solid color-mix(in srgb, var(--color-text) 8%, transparent); }
+.table tbody tr:hover { background: color-mix(in srgb, var(--color-text) 4%, transparent); }
+
+/* Dialog */
+.dialog-backdrop {
+  position: fixed; inset: 0; display: grid; place-items: center; padding: var(--space-4);
+  background: color-mix(in srgb, var(--color-neutral-900) 50%, transparent);
+}
+.dialog {
+  width: min(440px, 100%); display: flex; flex-direction: column; gap: var(--space-3);
+  padding: var(--space-4); background: var(--color-surface); box-shadow: var(--shadow-lg);
+}
+.dialog-title { font-family: var(--font-heading); font-weight: var(--font-heading-weight); font-size: 20px; }
+.dialog-body { font-size: 14px; color: var(--color-neutral-700); }
+.dialog-actions { display: flex; justify-content: flex-end; gap: var(--space-2); margin-top: var(--space-2); }
+
+/* Rules and imagery. This system prefers whitespace to rules; .hr exists, avoid it. */
+.hr { height: 1px; border: 0; margin: var(--space-4) 0; background: var(--color-divider); }
+.washed { filter: saturate(.6) contrast(.85) brightness(1.1) opacity(.94); }
+
+/* The rounded frame. These late overrides are what actually set the system's shapes. */
+.btn, .tag, .seg, .input { border-radius: 999px; }
+.input { padding-inline: 14px; }
+.card, .dialog { border-radius: calc(var(--radius-lg) * 1.15); }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; translate: none !important; }
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    translate: none !important;
+  }
 }

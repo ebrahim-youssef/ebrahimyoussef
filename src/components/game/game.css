@@ -1,52 +1,63 @@
-/* ---------- drawer shell ---------- */
+/* ---------- modal shell ---------- */
+/* Class and component names still say "drawer"; the presentation is a centred
+   modal, matching the design system's .dialog. */
 
 dialog.game-drawer {
   position: fixed;
-  inset-block: 0;
-  inset-inline-start: auto;
-  inset-inline-end: 0;
-  width: min(28rem, 100vw);
-  max-width: min(28rem, 100vw);
-  height: 100dvh;
-  max-height: 100dvh;
-  margin: 0;
+  inset: 0;
+  width: min(30rem, calc(100vw - 2 * var(--space-4)));
+  max-width: min(30rem, calc(100vw - 2 * var(--space-4)));
+  max-height: min(46rem, calc(100dvh - 2 * var(--space-4)));
+  margin: auto;
   padding: 0;
-  border: 0;
-  border-inline-start: 1px solid var(--gold-soft);
-  background: var(--base);
-  color: var(--ink);
-  font-family: var(--font);
-  box-shadow: var(--shadow-lift);
-  transform: translateX(100%);
+  overflow: hidden;
+  border: 1px solid var(--color-accent-2-300);
+  border-radius: calc(var(--radius-lg) * 1.15);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  box-shadow: var(--shadow-lg);
+  opacity: 0;
+  scale: 0.96;
   transition:
-    transform 0.3s var(--ease-spring),
+    opacity 0.25s ease,
+    scale 0.3s var(--ease-spring),
     overlay 0.3s allow-discrete,
     display 0.3s allow-discrete;
 }
 
+/* display only under [open]: a bare `display: flex` would defeat the dialog's
+   own closed state and leave it on screen */
 dialog.game-drawer[open] {
-  transform: translateX(0);
+  display: flex;
+  flex-direction: column;
+  min-height: 26rem;
+  opacity: 1;
+  scale: 1;
 }
 
 @starting-style {
   dialog.game-drawer[open] {
-    transform: translateX(100%);
+    opacity: 0;
+    scale: 0.96;
   }
 }
 
 dialog.game-drawer::backdrop {
-  background: rgb(43 33 24 / 0.45);
+  background: color-mix(in srgb, var(--color-neutral-900) 50%, transparent);
 }
 
 @media (prefers-reduced-motion: reduce) {
   dialog.game-drawer,
   dialog.game-drawer[open] {
     transition: none;
-    transform: translateX(0);
+    opacity: 1;
+    scale: 1;
   }
   @starting-style {
     dialog.game-drawer[open] {
-      transform: translateX(0);
+      opacity: 1;
+      scale: 1;
     }
   }
 }
@@ -55,25 +66,15 @@ dialog.game-drawer::backdrop {
   position: absolute;
   top: 0.75rem;
   inset-inline-end: 0.75rem;
-  width: 2.75rem;
-  height: 2.75rem;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  /* the glyph is the whole control, so it overrides .btn's 14px label size */
   font-size: 1.5rem;
   line-height: 1;
-  background: transparent;
-  color: var(--ink);
-  border: none;
-  border-radius: 999px;
-  cursor: pointer;
-  transition: background 0.15s;
 }
 
 .drawer-loading {
   padding: 4rem 1.5rem;
   text-align: center;
-  color: var(--ink-soft);
+  color: var(--color-neutral-700);
 }
 
 /* ---------- game shell ---------- */
@@ -81,7 +82,8 @@ dialog.game-drawer::backdrop {
 .game {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  flex: 1 1 auto;
+  min-height: 0;
 }
 .game-body {
   flex: 1 1 auto;
@@ -90,12 +92,12 @@ dialog.game-drawer::backdrop {
 }
 .game-footer {
   padding: 0.75rem 1.5rem 1.25rem;
-  border-top: 1px solid var(--gold-soft);
+  border-top: 1px solid var(--color-accent-2-300);
 }
 .proof-caption {
   margin: 0;
   font-size: 0.8rem;
-  color: var(--ink-soft);
+  color: var(--color-neutral-700);
   text-align: center;
 }
 
@@ -111,18 +113,20 @@ dialog.game-drawer::backdrop {
 }
 .game-title {
   margin: 0;
+  font-family: var(--font-heading);
+  font-weight: var(--font-heading-weight);
   font-size: 1.5rem;
 }
 .game-intro {
   margin: 0;
-  color: var(--ink-soft);
+  color: var(--color-neutral-700);
   max-width: 32ch;
 }
 .streak-badge {
   margin: 0;
   font-weight: 600;
-  color: var(--terra-deep);
-  background: var(--surface);
+  color: var(--color-accent-700);
+  background: var(--color-surface);
   padding: 0.35rem 0.85rem;
   border-radius: 999px;
 }
@@ -143,7 +147,7 @@ dialog.game-drawer::backdrop {
 .game-progress {
   margin: 0 0 1rem;
   font-size: 0.85rem;
-  color: var(--ink-soft);
+  color: var(--color-neutral-700);
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
@@ -165,10 +169,10 @@ dialog.game-drawer::backdrop {
   align-items: center;
   gap: 0.25rem;
   padding: 1rem;
-  border-radius: var(--r-md);
-  border: 2px solid var(--gold-soft);
-  background: var(--surface);
-  color: var(--ink);
+  border-radius: var(--radius-md);
+  border: 2px solid var(--color-accent-2-300);
+  background: var(--color-surface);
+  color: var(--color-text);
   cursor: pointer;
   text-align: center;
   transition:
@@ -182,7 +186,7 @@ dialog.game-drawer::backdrop {
 }
 .tap-option-en {
   font-size: 0.85rem;
-  color: var(--ink-soft);
+  color: var(--color-neutral-700);
 }
 
 /* ---------- write mode ---------- */
@@ -198,14 +202,14 @@ dialog.game-drawer::backdrop {
 .write-input {
   font-size: 16px;
   padding: 0.75rem 1rem;
-  border-radius: var(--r-md);
-  border: 2px solid var(--gold-soft);
-  background: var(--surface);
-  color: var(--ink);
-  font-family: var(--font);
+  border-radius: var(--radius-md);
+  border: 2px solid var(--color-accent-2-300);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-family: var(--font-body);
 }
 .write-input:focus-visible {
-  border-color: var(--terra-deep);
+  border-color: var(--color-accent-700);
 }
 .write-actions {
   display: flex;
@@ -213,38 +217,29 @@ dialog.game-drawer::backdrop {
   gap: 1rem;
   flex-wrap: wrap;
 }
-.link-quiet {
-  background: none;
-  border: none;
-  padding: 0;
-  color: var(--terra-deep);
-  text-decoration: underline;
-  cursor: pointer;
-  font: inherit;
-}
-
 /* ---------- figure card (reveal) ---------- */
 
 .figure-card {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  border-radius: var(--r-lg);
+  border-radius: calc(var(--radius-lg) * 1.15);
   padding: 0.25rem;
 }
 .figure-card-status {
   margin: 0;
   font-weight: 600;
-  color: var(--ink-soft);
+  color: var(--color-neutral-700);
 }
 .figure-card.is-correct .figure-card-status {
-  color: var(--terra-deep);
+  color: var(--color-accent-700);
 }
 .figure-card-name {
   margin: 0;
+  font-family: var(--font-heading);
+  font-weight: var(--font-heading-weight);
   font-size: 2rem;
-  font-weight: 700;
-  color: var(--terra-deep);
+  color: var(--color-accent-700);
 }
 .figure-card-honorific {
   font-size: 1.1rem;
@@ -252,7 +247,7 @@ dialog.game-drawer::backdrop {
 }
 .figure-card-name-en {
   margin: 0;
-  color: var(--ink-soft);
+  color: var(--color-neutral-700);
   font-size: 1rem;
 }
 .figure-card-fact {
@@ -260,7 +255,7 @@ dialog.game-drawer::backdrop {
 }
 .figure-card-fact-ar {
   margin: 0;
-  color: var(--ink-soft);
+  color: var(--color-neutral-700);
 }
 .figure-card-next {
   align-self: flex-start;
@@ -275,7 +270,7 @@ dialog.game-drawer::backdrop {
 }
 @keyframes card-flash {
   0% {
-    background: var(--gold-soft);
+    background: var(--color-accent-2-300);
   }
   100% {
     background: transparent;
@@ -311,11 +306,13 @@ dialog.game-drawer::backdrop {
 }
 .end-headline {
   margin: 0;
+  font-family: var(--font-heading);
+  font-weight: var(--font-heading-weight);
   font-size: 1.5rem;
 }
 .end-best {
   margin: 0;
-  color: var(--ink-soft);
+  color: var(--color-neutral-700);
 }
 .end-actions {
   display: flex;
@@ -327,20 +324,17 @@ dialog.game-drawer::backdrop {
 .toast {
   margin: 0.5rem 0 0;
   font-size: 0.9rem;
-  color: var(--terra-deep);
+  color: var(--color-accent-700);
 }
 .share-error {
   margin: 0.5rem 0 0;
   font-size: 0.9rem;
-  color: var(--ink-soft);
+  color: var(--color-neutral-700);
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .drawer-close:hover {
-    background: var(--surface);
-  }
   .tap-option:hover {
-    border-color: var(--terra-deep);
+    border-color: var(--color-accent-700);
     transform: translateY(-2px);
   }
 }

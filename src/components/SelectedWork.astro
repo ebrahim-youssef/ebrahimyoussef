@@ -3,7 +3,7 @@ import { products } from '../data/products';
 const featured = products.filter((product) => product.featured);
 ---
 
-<section id="work" class="section section-rule" aria-labelledby="work-title">
+<section id="work" class="section" aria-labelledby="work-title">
   <div class="wrap">
     <div class="section-intro">
       <p class="eyebrow">Proof, not promises</p>
@@ -12,7 +12,7 @@ const featured = products.filter((product) => product.featured);
     </div>
     <div class="work-list">
       {featured.map((product, index) => (
-        <article class="work-item">
+        <article class="work-item card elev-sm">
           <div class="work-index" aria-hidden="true">0{index + 1}</div>
           <div class="work-main">
             <p class="work-label">{product.label}</p>
@@ -36,17 +36,17 @@ const featured = products.filter((product) => product.featured);
 <style>
   .section-intro { display: grid; grid-template-columns: minmax(12rem, .7fr) 1.3fr; gap: .5rem 3rem; align-items: end; margin-bottom: clamp(2.5rem, 6vw, 4.5rem); }
   .section-intro .eyebrow { grid-column: 1 / -1; }
-  .section-intro p:last-child { max-width: 50ch; margin: 0; color: var(--ink-soft); }
-  .work-list { border-top: 1px solid var(--line-strong); }
-  .work-item { display: grid; grid-template-columns: 3rem minmax(13rem, .8fr) minmax(18rem, 1.2fr); gap: clamp(1rem, 3vw, 3rem); padding-block: clamp(2rem, 5vw, 3.5rem); border-bottom: 1px solid var(--line-strong); }
-  .work-index, .work-label { color: var(--terra-deep); font: 650 .76rem/1 var(--font-utility); letter-spacing: .08em; text-transform: uppercase; }
+  .section-intro p:last-child { max-width: var(--measure); margin: 0; color: var(--color-neutral-700); }
+  .work-list { display: grid; gap: var(--leading); }
+  .work-item { display: grid; grid-template-columns: 3rem minmax(13rem, .8fr) minmax(18rem, 1.2fr); gap: clamp(1rem, 3vw, 3rem); padding: var(--leading); }
+  .work-index, .work-label { color: var(--color-accent-700); font-size: 11px; font-weight: 600; letter-spacing: .1em; line-height: 1; text-transform: uppercase; }
   .work-label { margin: 0 0 .8rem; }
-  h3 { margin: 0; font-size: var(--step-3); letter-spacing: -.035em; }
-  .work-problem { max-width: 38ch; margin: 1rem 0 0; color: var(--ink-soft); }
-  .work-detail p { margin: 0 0 1rem; color: var(--ink-soft); }
-  .work-detail strong { display: block; margin-bottom: .2rem; color: var(--ink); font-size: .82rem; }
+  h3 { margin: 0; }
+  .work-problem { max-width: 38ch; margin: 1rem 0 0; color: var(--color-neutral-700); }
+  .work-detail p { margin: 0 0 1rem; color: var(--color-neutral-700); }
+  .work-detail strong { display: block; margin-bottom: .2rem; color: var(--color-text); font-size: .82rem; }
   .work-actions { display: flex; flex-wrap: wrap; gap: 1.2rem; margin-top: 1.5rem; }
-  .work-actions a { color: var(--ink); font-weight: 650; text-underline-offset: .35rem; }
+  .work-actions a { color: var(--color-text); font-weight: 650; text-underline-offset: .35rem; }
   @media (max-width: 48rem) {
     .section-intro { grid-template-columns: 1fr; }
     .work-item { grid-template-columns: 2rem 1fr; }

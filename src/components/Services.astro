@@ -11,7 +11,7 @@ import { SITE } from '../data/site';
     </div>
     <div class="service-list">
       {SITE.services.map((service) => (
-        <article>
+        <article class="card elev-sm">
           <h3>{service.name}</h3>
           <p>{service.body}</p>
         </article>
@@ -23,10 +23,10 @@ import { SITE } from '../data/site';
 <style>
   .services-layout { display: grid; grid-template-columns: minmax(16rem, .8fr) minmax(20rem, 1.2fr); gap: clamp(3rem, 8vw, 8rem); }
   .services-heading { align-self: start; position: sticky; top: 2rem; }
-  .services-heading > p:last-child { max-width: 42ch; color: var(--ink-soft); }
-  .service-list { border-top: 1px solid var(--line-strong); }
-  article { padding-block: 2rem; border-bottom: 1px solid var(--line-strong); }
-  h3 { margin: 0 0 .65rem; font-size: var(--step-2); }
-  article p { max-width: 49ch; margin: 0; color: var(--ink-soft); }
+  .services-heading > p:last-child { max-width: 42ch; color: var(--color-neutral-700); }
+  .service-list { display: grid; gap: var(--leading); }
+  article { padding: var(--leading); }
+  h3 { margin: 0 0 var(--space-2); }
+  article p { max-width: var(--measure); margin: 0; color: var(--color-neutral-700); }
   @media (max-width: 44rem) { .services-layout { grid-template-columns: 1fr; } .services-heading { position: static; } }
 </style>
