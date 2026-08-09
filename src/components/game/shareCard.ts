@@ -5,11 +5,11 @@ export interface ShareData {
 }
 
 const COLORS = {
-  bg: '#faf6ef',
-  ink: '#2b2118',
-  terra: '#c05c21',
-  terraDeep: '#96431a',
-  gold: '#c4972f',
+  bg: '#faf6ef', // --color-bg
+  ink: '#2b2118', // --color-text
+  terra: '#c05c21', // --color-accent
+  terraDeep: '#934312', // --color-accent-700
+  gold: '#b68725', // --color-accent-2
 };
 
 const SITE_URL = 'ebrahimyoussef.com';
@@ -151,11 +151,11 @@ export async function drawShareCard(data: ShareData): Promise<Blob | null> {
   ctx.textBaseline = 'middle';
 
   ctx.fillStyle = COLORS.terra;
-  ctx.font = "700 104px 'Rubik Variable', system-ui, sans-serif";
+  ctx.font = "400 104px 'Caprasimo', 'Rubik Variable', system-ui, sans-serif";
   ctx.fillText(`${data.score} / ${data.total}`, CARD_SIZE / 2, 460);
 
   ctx.fillStyle = COLORS.ink;
-  ctx.font = "600 44px 'Rubik Variable', system-ui, sans-serif";
+  ctx.font = "600 44px 'Figtree Variable', 'Rubik Variable', system-ui, sans-serif";
   const lines = wrapLines(ctx, headlineText(data), CARD_SIZE - 220);
   const lineHeight = 58;
   const startY = 580;
@@ -164,7 +164,7 @@ export async function drawShareCard(data: ShareData): Promise<Blob | null> {
   drawAccentStar(ctx, CARD_SIZE / 2, startY + lines.length * lineHeight + 60);
 
   ctx.fillStyle = COLORS.terraDeep;
-  ctx.font = "600 38px 'Rubik Variable', system-ui, sans-serif";
+  ctx.font = "600 38px 'Figtree Variable', 'Rubik Variable', system-ui, sans-serif";
   ctx.fillText(SITE_URL, CARD_SIZE / 2, startY + lines.length * lineHeight + 150);
 
   return new Promise((resolve) => {

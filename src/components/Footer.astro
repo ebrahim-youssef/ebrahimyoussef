@@ -17,11 +17,11 @@ const year = new Date().getFullYear();
 </footer>
 
 <style>
-  .footer { padding-block: 1.5rem; border-top: 1px solid var(--line); }
+  .footer { padding-block: calc(2 * var(--leading)); }
   .footer-inner, .footer-brand, nav { display: flex; align-items: center; }
   .footer-inner { justify-content: space-between; gap: 1rem 2rem; flex-wrap: wrap; }
   .footer-brand { gap: .65rem; font-weight: 650; }
-  p { margin: 0; color: var(--ink-soft); font-size: .82rem; }
+  p { margin: 0; color: var(--color-neutral-700); font-size: .82rem; }
   nav { gap: 1rem; }
-  nav a { min-width: 2.75rem; min-height: 2.75rem; display: inline-flex; align-items: center; justify-content: center; padding-inline: .1rem; color: var(--ink); font-size: .82rem; text-underline-offset: .3rem; }
+  nav a { min-width: 2.75rem; min-height: 2.75rem; display: inline-flex; align-items: center; justify-content: center; padding-inline: .1rem; color: var(--color-text); font-size: .82rem; text-underline-offset: .3rem; }
 </style>

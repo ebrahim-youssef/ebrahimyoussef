@@ -14,7 +14,7 @@ export default function GameDrawer() {
 
   return (
     <>
-      <button type="button" className="btn btn-primary" onClick={open}>
+      <button type="button" className="btn btn-primary game-launch" onClick={open}>
         Play the game ✦
       </button>
       <dialog
@@ -27,7 +27,7 @@ export default function GameDrawer() {
       >
         <button
           type="button"
-          className="drawer-close"
+          className="btn btn-ghost btn-icon drawer-close"
           onClick={() => ref.current?.close()}
           aria-label="Close game"
         >

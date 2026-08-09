@@ -22,7 +22,7 @@ function ModeSelectScreen({ onSelect }: { onSelect: (mode: Mode) => void }) {
         <button type="button" className="btn btn-primary mode-btn" onClick={() => onSelect('tap')}>
           <span aria-hidden="true">👆</span> Tap the answer
         </button>
-        <button type="button" className="btn btn-ghost mode-btn" onClick={() => onSelect('write')}>
+        <button type="button" className="btn btn-secondary mode-btn" onClick={() => onSelect('write')}>
           <span aria-hidden="true">✍️</span> Write it in Arabic
         </button>
       </div>

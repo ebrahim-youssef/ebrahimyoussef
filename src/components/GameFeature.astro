@@ -17,10 +17,13 @@ const game = products.find((product) => product.id === 'figures-game');
 </section>
 
 <style>
-  .game-feature { background: var(--ink); color: var(--base); }
+  .game-feature { background: var(--color-text); color: var(--color-bg); }
   .game-layout { display: grid; grid-template-columns: 1fr .8fr; gap: clamp(2rem, 7vw, 7rem); align-items: end; }
   .game-layout h2 { max-width: 15ch; }
-  .game-copy p { max-width: 42ch; color: #d8cfc4; }
-  .game-copy :global(.btn) { margin-top: 1rem; background: var(--base); color: var(--ink); }
+  .game-copy p { max-width: 42ch; color: var(--color-neutral-300); }
+  /* the launch button only. The slot also carries the game's <dialog>, so a plain
+     descendant selector here repaints every button inside the drawer, and a child
+     combinator misses it because Astro wraps the island in <astro-island>. */
+  .game-copy :global(.game-launch) { margin-top: 1rem; background: var(--color-bg); color: var(--color-text); }
   @media (max-width: 42rem) { .game-layout { grid-template-columns: 1fr; align-items: start; } }
 </style>
