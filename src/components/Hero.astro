@@ -69,6 +69,13 @@ import { SITE } from '../data/site';
     .hero-inner { grid-template-columns: 1fr; justify-items: start; }
     .hero-portrait { justify-self: start; width: min(100%, 20rem); }
   }
+
+  /* below md the portrait centres under the flush-left copy, and the octagram
+     comes in to 300px so it stops overrunning the figure */
+  @media (max-width: 48rem) {
+    .hero-portrait { justify-self: center; }
+    .hero-portrait-mark :global(svg) { width: 300px; height: 300px; }
+  }
   @media (max-width: 30rem) {
     .hero-inner { padding-top: calc(2.5 * var(--leading)); }
     .hero-actions .btn { width: 100%; }
