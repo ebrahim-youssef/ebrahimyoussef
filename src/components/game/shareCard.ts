@@ -22,7 +22,7 @@ export function headlineText({ score, total, seconds }: ShareData): string {
 
 /** Longer line used for the native share sheet / clipboard fallback. */
 export function shareMessage({ score, total, seconds }: ShareData): string {
-  return `I named ${score} of ${total} Islamic figures in ${seconds}s — play at ${SITE_URL}`;
+  return `I named ${score} of ${total} Islamic figures in ${seconds}s. Play at ${SITE_URL}`;
 }
 
 interface TextClipboard {
