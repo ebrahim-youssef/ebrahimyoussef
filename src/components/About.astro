@@ -1,19 +1,19 @@
 ---
 import Monogram from './Monogram.astro';
-import { SITE } from '../data/site';
+import { SITE, socialUrl } from '../data/site';
 ---
 
 <section id="about" class="section" aria-labelledby="about-title">
   <div class="wrap about-layout">
     <div class="about-mark card elev-sm"><Monogram size={148} title={`${SITE.name} monogram`} /></div>
     <div>
-      <p class="eyebrow">The person behind the work</p>
-      <h2 id="about-title" class="section-heading">Useful software, built with care.</h2>
-      <p class="about-lead">I’m Ebrahim, a front-end engineer who likes turning complicated ideas into calm, understandable products. I care about the decisions people notice—clarity, speed, accessibility—and the engineering choices that keep a product healthy after launch.</p>
+      <p class="eyebrow">Why I do this</p>
+      <h2 id="about-title" class="section-heading">I did not come to software the usual way.</h2>
+      <p class="about-lead">I started in nursing. I moved into development by teaching myself: courses, freelance work, and building real projects until they worked. Figuring it out alone taught me how much harder the path is without a map, and that is why my work is split in two, building useful products and sharing what I learn along the way.</p>
       <p class="developer-note">{SITE.personalNote}</p>
       <div class="about-links">
-        <a href={SITE.socials.github} target="_blank" rel="noopener noreferrer">GitHub ↗</a>
-        <a href={SITE.socials.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>
+        <a href={socialUrl('github')} target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+        <a href={socialUrl('linkedin')} target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>
       </div>
     </div>
   </div>

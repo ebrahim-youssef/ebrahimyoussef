@@ -40,7 +40,7 @@ export default function EndScreen({
           await navigator.share({ files: [file], text });
         } catch (error) {
           if (!(error instanceof DOMException && error.name === 'AbortError')) {
-            setShareError("Couldn't share — the browser rejected the request.");
+            setShareError("Couldn't share. The browser rejected the request.");
           }
         }
         return;
@@ -51,10 +51,10 @@ export default function EndScreen({
         setToast('Copied!');
         window.setTimeout(() => setToast(null), 2200);
       } else {
-        setShareError("Couldn't share — clipboard access is unavailable in this browser.");
+        setShareError("Couldn't share. Clipboard access is unavailable in this browser.");
       }
     } catch {
-      setShareError("Couldn't share — copy blocked by the browser.");
+      setShareError("Couldn't share. Copy was blocked by the browser.");
     } finally {
       setSharing(false);
     }
