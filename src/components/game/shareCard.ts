@@ -1,3 +1,5 @@
+import markSvg from '../../../assets/brand/monogram.svg?raw';
+
 export interface ShareData {
   score: number;
   total: number;
@@ -38,47 +40,24 @@ export async function copyShareText(
   return 'copied';
 }
 
-/** Hand-drawn version of the square-Kufic "EY" octagon monogram (see Monogram.astro), scaled onto canvas. */
-function drawMonogram(ctx: CanvasRenderingContext2D, cx: number, cy: number, scale: number) {
+/* The card draws the same EY mark the rest of the site does, read straight from the
+   brand asset so a share image can never carry a stale logo. Path2D consumes SVG
+   path data as-is, so nothing here needs to know the shape. */
+const [, MARK_W, MARK_H] = /viewBox="0 0 (\d+(?:\.\d+)?) (\d+(?:\.\d+)?)"/.exec(markSvg)!.map(Number);
+const MARK_PATHS = [...markSvg.matchAll(/<path fill="([^"]+)" d="([^"]+)"/g)].map(
+  ([, fill, d]) => ({ fill, d }),
+);
+
+/** Draws the EY mark centred on (cx, cy) at a given rendered width. */
+function drawMonogram(ctx: CanvasRenderingContext2D, cx: number, cy: number, width: number) {
+  const scale = width / MARK_W;
   ctx.save();
-  ctx.translate(cx - 32 * scale, cy - 32 * scale);
+  ctx.translate(cx - width / 2, cy - (MARK_H * scale) / 2);
   ctx.scale(scale, scale);
-
-  ctx.beginPath();
-  const points: Array<[number, number]> = [
-    [6, 2],
-    [58, 2],
-    [62, 6],
-    [62, 58],
-    [58, 62],
-    [6, 62],
-    [2, 58],
-    [2, 6],
-  ];
-  points.forEach(([x, y], i) => (i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y)));
-  ctx.closePath();
-  ctx.fillStyle = COLORS.bg;
-  ctx.fill();
-  ctx.lineWidth = 1.5;
-  ctx.strokeStyle = COLORS.terraDeep;
-  ctx.stroke();
-
-  ctx.fillStyle = COLORS.terra;
-  // "E"
-  ctx.fillRect(6, 8, 8, 48);
-  ctx.fillRect(6, 8, 24, 8);
-  ctx.fillRect(6, 28, 16, 8);
-  ctx.fillRect(6, 48, 24, 8);
-  // "Y"
-  ctx.fillRect(42, 28, 8, 28);
-  ctx.fillRect(36, 20, 8, 8);
-  ctx.fillRect(32, 12, 8, 8);
-  ctx.fillRect(48, 20, 8, 8);
-  ctx.fillRect(52, 12, 8, 8);
-
-  ctx.fillStyle = COLORS.gold;
-  ctx.fillRect(30, 28, 8, 8);
-
+  for (const { fill, d } of MARK_PATHS) {
+    ctx.fillStyle = fill;
+    ctx.fill(new Path2D(d));
+  }
   ctx.restore();
 }
 
@@ -145,7 +124,7 @@ export async function drawShareCard(data: ShareData): Promise<Blob | null> {
   ctx.lineWidth = 6;
   ctx.strokeRect(30, 30, CARD_SIZE - 60, CARD_SIZE - 60);
 
-  drawMonogram(ctx, CARD_SIZE / 2, 210, 3.2);
+  drawMonogram(ctx, CARD_SIZE / 2, 210, 205);
 
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
