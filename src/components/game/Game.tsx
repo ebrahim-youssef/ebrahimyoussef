@@ -15,7 +15,7 @@ function ModeSelectScreen({ onSelect }: { onSelect: (mode: Mode) => void }) {
     <div className="mode-select">
       <h2 className="game-title">Name the figure</h2>
       <p className="game-intro">
-        Seven rounds. Read the hint, then name the figure — tap an answer, or write it in Arabic.
+        Seven rounds. Read the hint, then name the figure. Tap an answer, or write it in Arabic.
       </p>
       {streak >= 1 && <p className="streak-badge">🔥 {streak}-day streak</p>}
       <div className="mode-buttons">
@@ -120,7 +120,7 @@ export default function Game() {
         )}
       </div>
       <footer className="game-footer">
-        <p className="proof-caption">Built to demo RTL input + game-state in Astro.</p>
+        <p className="proof-caption">A small experiment in Arabic input and game state.</p>
       </footer>
     </div>
   );

@@ -12,14 +12,16 @@ await Promise.all(requiredFiles.map((file) => access(file)));
 
 const html = await readFile('dist/index.html', 'utf8');
 const requiredText = [
-  'I build clear, dependable digital products for startups and small businesses.',
+  'I build useful products, then share what I learn building them.',
+  'Build something useful',
   'Email me about a project',
-  'Book a call',
-  'Selected work',
+  'Products with a purpose',
+  'Who this is for',
   'How I can help',
-  'How we get from idea to launch',
+  'How the work goes',
+  'Where I share',
 ];
-const requiredIds = ['work', 'services', 'process', 'about', 'play', 'contact'];
+const requiredIds = ['work', 'audience', 'services', 'process', 'about', 'play', 'sharing', 'contact'];
 
 for (const text of requiredText) {
   if (!html.includes(text)) throw new Error(`Missing rendered text: ${text}`);
