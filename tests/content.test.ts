@@ -71,7 +71,7 @@ describe('portfolio content contract', () => {
       { id: 'qabilah', url: 'https://qabilah.com/profile/ibrahim-youssef' },
       { id: 'facebook', url: 'https://www.facebook.com/61586254296785' },
       { id: 'youtube', url: 'https://www.youtube.com/@ebrahimyoussef391' },
-      { id: 'github', url: 'https://github.com/Ibrahim-Rezq' },
+      { id: 'github', url: 'https://github.com/ebrahim-youssef' },
     ]);
     for (const social of socials) expect(social.url).toMatch(/^https:\/\//);
     expect(socials.find((social) => social.id === 'linkedin')?.arabic).toBe(true);
@@ -79,7 +79,7 @@ describe('portfolio content contract', () => {
   });
 
   test('resolves social links by id', () => {
-    expect(socialUrl('github')).toBe('https://github.com/Ibrahim-Rezq');
+    expect(socialUrl('github')).toBe('https://github.com/ebrahim-youssef');
     expect(() => socialUrl('nope')).toThrow();
   });
 

@@ -27,7 +27,7 @@ export const products: Product[] = [
     result:
       'Built with Expo and React Native for Android, iOS, and the web. Data stays on the device and play works offline, with no accounts, ads, or analytics. This is my main project right now and the clearest example of where I am heading: intentional, useful digital experiences for Muslims.',
     href: null,
-    repo: 'https://github.com/Ibrahim-Rezq/arkan',
+    repo: 'https://github.com/ebrahim-youssef/arkan',
     cta: 'Open Arkan',
     featured: true,
   },
@@ -43,7 +43,7 @@ export const products: Product[] = [
     result:
       'A Next.js app with a Capacitor Android shell that keeps working offline. It is a product direction I intend to keep building, not a portfolio concept, and the codebase is public.',
     href: null,
-    repo: 'https://github.com/Ibrahim-Rezq/nabd',
+    repo: 'https://github.com/ebrahim-youssef/nabd',
     cta: 'Open NABD',
     featured: true,
   },
@@ -58,8 +58,8 @@ export const products: Product[] = [
       'A typed JavaScript and TypeScript SDK that puts a single interface over those providers, with provider selection and automatic fallback when a source does not respond.',
     result:
       'Useful infrastructure for developers building Quran and Islamic products: one result model, provider adapters, full TypeScript types, and documentation.',
-    href: 'https://ibrahim-rezq.github.io/quran-api-unified/',
-    repo: 'https://github.com/Ibrahim-Rezq/quran-api-unified',
+    href: 'https://ebrahim-youssef.github.io/quran-api-unified/',
+    repo: 'https://github.com/ebrahim-youssef/quran-api-unified',
     cta: 'Read the docs',
     featured: true,
   },
@@ -75,7 +75,7 @@ export const products: Product[] = [
     result:
       'Built with Next.js, TypeScript, Prisma, and PostgreSQL. A smaller project than the others, and where I worked out server actions, typed data access from database to component, and a bilingual interface end to end.',
     href: null,
-    repo: 'https://github.com/Ibrahim-Rezq/quote-vault',
+    repo: 'https://github.com/ebrahim-youssef/quote-vault',
     cta: 'Open Quote Vault',
     featured: true,
   },
@@ -89,7 +89,7 @@ export const products: Product[] = [
       'A small guessing game about figures from Islamic history, in Arabic and English: tap or write mode, Arabic input that forgives spelling variations, streaks, and a share card. It runs as a React island inside this otherwise static Astro site.',
     result: 'A playable page section rather than a product, built because it was worth building.',
     href: '#play',
-    repo: 'https://github.com/Ibrahim-Rezq/ebrahimyoussef',
+    repo: 'https://github.com/ebrahim-youssef/ebrahimyoussef',
     cta: 'Play the game',
     featured: false,
   },
