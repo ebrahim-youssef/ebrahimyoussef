@@ -9,7 +9,7 @@ interface FigureCardProps {
 export default function FigureCard({ figure, correct, onNext }: FigureCardProps) {
   return (
     <div className={`figure-card ${correct ? 'is-correct' : 'is-incorrect'}`}>
-      <p className="figure-card-status">{correct ? 'Correct' : "Not quite — here's the answer"}</p>
+      <p className="figure-card-status">{correct ? 'Correct' : "Not quite. Here's the answer"}</p>
       <p className="figure-card-name" dir="rtl" lang="ar">
         {figure.nameAr} <span className="figure-card-honorific">{figure.honorific}</span>
       </p>

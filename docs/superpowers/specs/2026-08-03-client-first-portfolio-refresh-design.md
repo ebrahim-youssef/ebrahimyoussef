@@ -41,7 +41,7 @@ The primary calls to action are `Email me about a project` and `Book a call`. Th
 
 ## Selected-work inventory
 
-The initial candidates are NABD (`https://nobd-frontend.vercel.app`, source at `https://github.com/Ibrahim-Rezq/nabd`), Quran Unified API (`https://ibrahim-rezq.github.io/quran-api-unified/`, source at `https://github.com/Ibrahim-Rezq/quran-api-unified`), and the Islamic Figures Game embedded on this site. Before implementation, each candidate must be opened and inventoried for a verified problem statement, Ebrahim's contribution, a visible result, usable image assets, and permission to publish those assets. Unsupported statements are omitted. The game remains supporting personal proof rather than one of the primary commercial case studies.
+The initial candidates are NABD (`https://nobd-frontend.vercel.app`, source at `https://github.com/ebrahim-youssef/nabd`), Quran Unified API (`https://ebrahim-youssef.github.io/quran-api-unified/`, source at `https://github.com/ebrahim-youssef/quran-api-unified`), and the Islamic Figures Game embedded on this site. Before implementation, each candidate must be opened and inventoried for a verified problem statement, Ebrahim's contribution, a visible result, usable image assets, and permission to publish those assets. Unsupported statements are omitted. The game remains supporting personal proof rather than one of the primary commercial case studies.
 
 ## Visual direction
 

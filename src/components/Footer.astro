@@ -1,6 +1,6 @@
 ---
 import Monogram from './Monogram.astro';
-import { SITE } from '../data/site';
+import { SITE, socialUrl } from '../data/site';
 const year = new Date().getFullYear();
 ---
 
@@ -9,8 +9,9 @@ const year = new Date().getFullYear();
     <div class="footer-brand"><Monogram size={32} /><span>{SITE.name}</span></div>
     <p>© {year} · Built with Astro, without trackers.</p>
     <nav aria-label="Footer links">
-      <a href={SITE.socials.github} target="_blank" rel="noopener noreferrer">GitHub</a>
-      <a href={SITE.socials.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a>
+      <a href={socialUrl('github')} target="_blank" rel="noopener noreferrer">GitHub</a>
+      <a href={socialUrl('linkedin')} target="_blank" rel="noopener noreferrer">LinkedIn</a>
+      <a href="#sharing">Where I share</a>
       <a href={SITE.emailUrl}>Email</a>
     </nav>
   </div>

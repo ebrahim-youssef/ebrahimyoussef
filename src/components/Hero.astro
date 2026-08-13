@@ -9,14 +9,14 @@ import { SITE } from '../data/site';
   <Arabesque variant="tile" />
   <div class="wrap hero-inner">
     <div class="hero-copy-col">
-      <p class="eyebrow">{SITE.role} · Available for selected projects</p>
+      <p class="eyebrow">{SITE.role} · {SITE.location}</p>
       <h1 id="hero-title" class="display"><span class="line">{SITE.tagline}</span></h1>
-      <p class="hero-copy">From focused business websites to production-ready interfaces, I turn ideas into accessible experiences that are easy to use and maintain.</p>
-      <div class="hero-actions" aria-label="Contact options">
-        <a class="btn btn-primary" href={SITE.emailUrl}>Email me about a project</a>
-        <a class="btn btn-secondary" href={SITE.bookingUrl}>Book a call</a>
+      <p class="hero-copy">I help people and businesses turn real problems and rough ideas into digital products they can actually use. I came into development from nursing, teaching myself along the way, so I also share what that route taught me: the lessons, the mistakes, and the parts of the process that usually stay hidden.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#contact">Build something useful</a>
+        <a class="btn btn-secondary" href="#sharing">Follow the learning journey</a>
       </div>
-      <a class="work-link" href="#work">See selected work <span aria-hidden="true">↓</span></a>
+      <a class="work-link" href="#work">See what I’m building <span aria-hidden="true">↓</span></a>
     </div>
     <figure class="hero-portrait">
       <div class="hero-portrait-mark"><Arabesque variant="mark" size={400} stroke="var(--color-accent-2-600)" /></div>

@@ -1,9 +1,9 @@
 ---
 import '../styles/global.css';
-import { SITE } from '../data/site';
-const title = `${SITE.name} — Front-end engineer & product builder`;
+import { SITE, socials } from '../data/site';
+const title = SITE.title;
 const socialImage = `${SITE.url}/og.png`;
-const socialImageAlt = `${SITE.name} — front-end engineer and product builder`;
+const socialImageAlt = `${SITE.name}, product builder and front-end engineer`;
 const jsonLd = {
   '@context': 'https://schema.org',
   '@graph': [
@@ -13,7 +13,7 @@ const jsonLd = {
       url: SITE.url,
       email: `mailto:${SITE.email}`,
       jobTitle: 'Front-end Engineer',
-      sameAs: [SITE.socials.github, SITE.socials.linkedin, SITE.socials.qabilah],
+      sameAs: socials.map((item) => item.url),
     },
     { '@type': 'WebSite', name: SITE.name, url: SITE.url },
   ],

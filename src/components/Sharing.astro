@@ -1,0 +1,31 @@
+---
+import { socials } from '../data/site';
+---
+
+<section class="section" id="sharing" aria-labelledby="sharing-title">
+  <div class="wrap">
+    <p class="eyebrow">Where I share</p>
+    <h2 id="sharing-title" class="section-heading">Notes from the work, in public.</h2>
+    <p class="sharing-intro">Most of what I post on LinkedIn and Qabilah is in Arabic. I share what I am learning, what I got wrong, and how the work actually goes.</p>
+    <ul role="list">
+      {socials.map((social) => (
+        <li class="card elev-sm">
+          <h3><a href={social.url} target="_blank" rel="noopener noreferrer">{social.name} <span aria-hidden="true">↗</span></a></h3>
+          {social.arabic && <span class="tag tag-neutral">Arabic</span>}
+          <p>{social.body}</p>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .sharing-intro { max-width: var(--measure); color: var(--color-neutral-700); }
+  ul { display: grid; grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr)); gap: var(--leading); margin: calc(2 * var(--leading)) 0 0; padding: 0; list-style: none; }
+  li { padding: var(--leading); }
+  h3 { margin: 0 0 var(--space-2); }
+  h3 a { color: var(--color-text); text-underline-offset: .35rem; }
+  /* the card is a flex column, so the chip would stretch the full width */
+  .tag { align-self: start; }
+  li p { color: var(--color-neutral-700); }
+</style>

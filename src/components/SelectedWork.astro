@@ -6,9 +6,9 @@ const featured = products.filter((product) => product.featured);
 <section id="work" class="section" aria-labelledby="work-title">
   <div class="wrap">
     <div class="section-intro">
-      <p class="eyebrow">Proof, not promises</p>
-      <h2 id="work-title" class="section-heading">Selected work</h2>
-      <p>Products that show how I think through real constraints, from an Arabic-first daily experience to a typed developer tool.</p>
+      <p class="eyebrow">Products with a purpose</p>
+      <h2 id="work-title" class="section-heading">What I’m building</h2>
+      <p>Four projects, each one started from a problem I wanted solved: intentional Islamic experiences in Arabic, infrastructure other developers can build on, and tools I use myself.</p>
     </div>
     <div class="work-list">
       {featured.map((product, index) => (
@@ -17,14 +17,15 @@ const featured = products.filter((product) => product.featured);
           <div class="work-main">
             <p class="work-label">{product.label}</p>
             <h3>{product.name}</h3>
+            {product.status && <p class="work-status"><span class="tag tag-accent">{product.status}</span></p>}
             <p class="work-problem">{product.problem}</p>
           </div>
           <div class="work-detail">
             <p><strong>What I built</strong>{product.contribution}</p>
             <p><strong>Current result</strong>{product.result}</p>
             <div class="work-actions">
-              <a href={product.href} target="_blank" rel="noopener noreferrer">{product.cta} ↗</a>
-              <a href={product.repo} target="_blank" rel="noopener noreferrer">View source</a>
+              {product.href && <a href={product.href} target="_blank" rel="noopener noreferrer">{product.cta} ↗</a>}
+              <a href={product.repo} target="_blank" rel="noopener noreferrer" aria-label={`View the ${product.name} source`}>View source</a>
             </div>
           </div>
         </article>
@@ -42,6 +43,7 @@ const featured = products.filter((product) => product.featured);
   .work-index, .work-label { color: var(--color-accent-700); font-size: 11px; font-weight: 600; letter-spacing: .1em; line-height: 1; text-transform: uppercase; }
   .work-label { margin: 0 0 .8rem; }
   h3 { margin: 0; }
+  .work-status { margin: .6rem 0 0; }
   .work-problem { max-width: 38ch; margin: 1rem 0 0; color: var(--color-neutral-700); }
   .work-detail p { margin: 0 0 1rem; color: var(--color-neutral-700); }
   .work-detail strong { display: block; margin-bottom: .2rem; color: var(--color-text); font-size: .82rem; }

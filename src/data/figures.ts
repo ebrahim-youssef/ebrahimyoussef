@@ -85,7 +85,7 @@ export const figures: Figure[] = [
     honorific: 'عليه السلام',
     category: 'prophet',
     hintEn: 'Born miraculously without a father, he spoke as an infant in the cradle to defend his mother from accusation.',
-    factEn: "Born miraculously to Maryam without a father, he spoke in the cradle to defend her honor. God gave him miracles — healing the blind and the leper, raising the dead by His permission.",
+    factEn: "Born miraculously to Maryam without a father, he spoke in the cradle to defend her honor. God gave him miracles: healing the blind and the leper, raising the dead by His permission.",
     factAr: 'وُلد بمعجزة من أمه مريم من غير أب، وتكلّم في المهد دفاعًا عنها، وأيّده الله بمعجزات كإبراء الأكمه والأبرص وإحياء الموتى بإذن الله.',
     accepted: ['عيسى'],
   },
