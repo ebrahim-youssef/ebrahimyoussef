@@ -41,7 +41,7 @@ export const socials: SocialLink[] = [
   {
     id: 'github',
     name: 'GitHub',
-    url: 'https://github.com/Ibrahim-Rezq',
+    url: 'https://github.com/ebrahim-youssef',
     body: 'The products, experiments, and tools I build in public.',
     arabic: false,
   },
