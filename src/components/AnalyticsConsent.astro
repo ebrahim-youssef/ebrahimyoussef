@@ -17,7 +17,7 @@ import { SITE } from '../data/site';
   <div class="consent-copy">
     <h2 id="analytics-consent-title">Optional analytics</h2>
     <p id="analytics-consent-description">
-      I use Google Analytics to learn which parts of this site are useful. It only loads if you accept.
+      I use limited, cookieless analytics to learn what is useful. Accept to enable Analytics cookies and fuller reporting.
     </p>
   </div>
   <div class="consent-actions">
@@ -27,7 +27,11 @@ import { SITE } from '../data/site';
 </aside>
 
 <script>
-  type AnalyticsConsent = 'accepted' | 'declined';
+  import {
+    getAnalyticsBootstrap,
+    type AnalyticsConsent,
+    type AnalyticsStorage,
+  } from '../scripts/analyticsConsent';
 
   declare global {
     interface Window {
@@ -40,6 +44,10 @@ import { SITE } from '../data/site';
   const settings = document.querySelector<HTMLButtonElement>('[data-analytics-settings]');
   const accept = consent?.querySelector<HTMLButtonElement>('[data-analytics-accept]');
   const decline = consent?.querySelector<HTMLButtonElement>('[data-analytics-decline]');
+
+  function gtag(..._args: unknown[]): void {
+    window.dataLayer.push(arguments);
+  }
 
   function readConsent(): AnalyticsConsent | null {
     try {
@@ -58,17 +66,57 @@ import { SITE } from '../data/site';
     }
   }
 
-  function loadAnalytics(): void {
+  async function fetchRequiresConsent(): Promise<boolean> {
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), 2_000);
+
+    try {
+      const response = await fetch('/api/privacy-region', {
+        headers: { Accept: 'application/json' },
+        signal: controller.signal,
+      });
+      if (!response.ok) return true;
+
+      const data: unknown = await response.json();
+      if (
+        typeof data !== 'object' ||
+        data === null ||
+        !('requiresConsent' in data) ||
+        typeof data.requiresConsent !== 'boolean'
+      ) {
+        return true;
+      }
+
+      return data.requiresConsent;
+    } catch {
+      return true;
+    } finally {
+      window.clearTimeout(timeout);
+    }
+  }
+
+  function updateConsent(analyticsStorage: AnalyticsStorage): void {
+    gtag('consent', 'update', {
+      ad_storage: 'denied',
+      ad_user_data: 'denied',
+      ad_personalization: 'denied',
+      analytics_storage: analyticsStorage,
+    });
+  }
+
+  function loadAnalytics(defaultAnalyticsStorage: AnalyticsStorage): void {
     if (!consent || document.querySelector('[data-google-analytics]')) return;
 
     const tagId = consent.dataset.googleTagId;
     if (!tagId) return;
 
     window.dataLayer = window.dataLayer || [];
-    function gtag(..._args: unknown[]): void {
-      window.dataLayer.push(arguments);
-    }
-
+    gtag('consent', 'default', {
+      ad_storage: 'denied',
+      ad_user_data: 'denied',
+      ad_personalization: 'denied',
+      analytics_storage: defaultAnalyticsStorage,
+    });
     gtag('js', new Date());
     gtag('config', tagId);
 
@@ -102,33 +150,29 @@ import { SITE } from '../data/site';
     settings.focus();
   }
 
-  if (consent && settings && accept && decline) {
-    const storedConsent = readConsent();
+  async function initializeAnalytics(): Promise<void> {
+    if (!consent || !settings || !accept || !decline) return;
 
-    if (storedConsent === 'accepted') loadAnalytics();
+    const requiresConsent = await fetchRequiresConsent();
+    const storedConsent = requiresConsent ? readConsent() : null;
+    const bootstrap = getAnalyticsBootstrap(requiresConsent, storedConsent);
 
-    if (storedConsent) {
-      settings.hidden = false;
-    } else {
-      consent.hidden = false;
-    }
+    loadAnalytics(bootstrap.defaultAnalyticsStorage);
+    if (bootstrap.grantAfterLoad) updateConsent('granted');
+
+    consent.hidden = !bootstrap.showPrompt;
+    settings.hidden = !bootstrap.showSettings;
 
     accept.addEventListener('click', () => {
       writeConsent('accepted');
-      loadAnalytics();
+      updateConsent('granted');
       closeConsent();
     });
 
     decline.addEventListener('click', () => {
-      const analyticsWasLoaded = Boolean(document.querySelector('[data-google-analytics]'));
       writeConsent('declined');
+      updateConsent('denied');
       clearAnalyticsCookies();
-
-      if (analyticsWasLoaded) {
-        window.location.reload();
-        return;
-      }
-
       closeConsent();
     });
 
@@ -138,6 +182,9 @@ import { SITE } from '../data/site';
       accept.focus();
     });
   }
+
+  window.dataLayer = window.dataLayer || [];
+  void initializeAnalytics();
 </script>
 
 <style>
