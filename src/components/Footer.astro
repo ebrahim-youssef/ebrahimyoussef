@@ -7,12 +7,15 @@ const year = new Date().getFullYear();
 <footer class="footer">
   <div class="wrap footer-inner">
     <div class="footer-brand"><Monogram size={32} /><span>{SITE.name}</span></div>
-    <p>© {year} · Built with Astro, without trackers.</p>
+    <p>© {year} · Built with Astro. Analytics is optional.</p>
     <nav aria-label="Footer links">
       <a href={socialUrl('github')} target="_blank" rel="noopener noreferrer">GitHub</a>
       <a href={socialUrl('linkedin')} target="_blank" rel="noopener noreferrer">LinkedIn</a>
       <a href="#sharing">Where I share</a>
       <a href={SITE.emailUrl}>Email</a>
+      <button class="privacy-button" type="button" data-analytics-settings aria-controls="analytics-consent" hidden>
+        Privacy settings
+      </button>
     </nav>
   </div>
 </footer>
@@ -24,5 +27,6 @@ const year = new Date().getFullYear();
   .footer-brand { gap: .65rem; font-weight: 650; }
   p { margin: 0; color: var(--color-neutral-700); font-size: .82rem; }
   nav { gap: 1rem; }
-  nav a { min-width: 2.75rem; min-height: 2.75rem; display: inline-flex; align-items: center; justify-content: center; padding-inline: .1rem; color: var(--color-text); font-size: .82rem; text-underline-offset: .3rem; }
+  nav a, .privacy-button { min-width: 2.75rem; min-height: 2.75rem; display: inline-flex; align-items: center; justify-content: center; padding-inline: .1rem; color: var(--color-text); font-size: .82rem; text-underline-offset: .3rem; }
+  .privacy-button { border: 0; background: transparent; text-decoration: underline; cursor: pointer; }
 </style>

@@ -62,6 +62,7 @@ export const SITE = {
   description:
     'I build useful digital products for people and businesses, and share practical lessons for self-taught developers and career-switchers.',
   url: 'https://ebrahimyoussef.com',
+  googleTagId: 'G-JQEG0EKW4G',
   email,
   emailUrl,
   navigation: [
