@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import AnalyticsConsent from '../components/AnalyticsConsent.astro';
 import { SITE, socials } from '../data/site';
 const title = SITE.title;
 const socialImage = `${SITE.url}/og.png`;
@@ -55,5 +56,6 @@ const jsonLd = {
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
     <slot />
+    {import.meta.env.PROD && <AnalyticsConsent />}
   </body>
 </html>

@@ -53,6 +53,22 @@ if (!html.includes('"@type":"Person"') || !html.includes('"@type":"WebSite"')) {
   throw new Error('Missing structured data graph');
 }
 
+const analyticsConsentMarkers = [
+  'data-analytics-consent',
+  'G-JQEG0EKW4G',
+  'Accept analytics',
+  'Decline analytics',
+  'data-analytics-settings',
+];
+
+if (analyticsConsentMarkers.some((marker) => !html.includes(marker))) {
+  throw new Error('Missing consent-gated analytics controls');
+}
+
+if (/<script[^>]+src="https:\/\/www\.googletagmanager\.com\/gtag\/js/i.test(html)) {
+  throw new Error('Google Analytics must not load before visitor consent');
+}
+
 if (/href=""|\b(?:TBD|TODO|coming soon)\b/i.test(html)) {
   throw new Error('Rendered page contains an empty link or placeholder copy');
 }
