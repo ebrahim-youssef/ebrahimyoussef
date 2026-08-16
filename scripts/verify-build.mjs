@@ -1,4 +1,4 @@
-import { access, readFile } from 'node:fs/promises';
+import { access, readFile, readdir } from 'node:fs/promises';
 
 const requiredFiles = [
   'dist/index.html',
@@ -11,6 +11,11 @@ const requiredFiles = [
 await Promise.all(requiredFiles.map((file) => access(file)));
 
 const html = await readFile('dist/index.html', 'utf8');
+const clientScriptFiles = (await readdir('dist/_astro')).filter((file) => file.endsWith('.js'));
+const clientJavaScript = [
+  html,
+  ...(await Promise.all(clientScriptFiles.map((file) => readFile(`dist/_astro/${file}`, 'utf8')))),
+].join('\n');
 const requiredText = [
   'I build useful products, then share what I learn building them.',
   'Build something useful',
@@ -65,8 +70,16 @@ if (analyticsConsentMarkers.some((marker) => !html.includes(marker))) {
   throw new Error('Missing consent-gated analytics controls');
 }
 
-if (/<script[^>]+src="https:\/\/www\.googletagmanager\.com\/gtag\/js/i.test(html)) {
-  throw new Error('Google Analytics must not load before visitor consent');
+const advancedConsentMarkers = [
+  '/api/privacy-region',
+  'analytics_storage',
+  'ad_storage',
+  'ad_user_data',
+  'ad_personalization',
+];
+
+if (advancedConsentMarkers.some((marker) => !clientJavaScript.includes(marker))) {
+  throw new Error('Missing regional Advanced Consent Mode client behavior');
 }
 
 if (/href=""|\b(?:TBD|TODO|coming soon)\b/i.test(html)) {
