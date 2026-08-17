@@ -4,7 +4,7 @@
 
 Collect normal Google Analytics 4 measurements immediately for visitors outside the European Economic Area, United Kingdom, and Switzerland. For visitors inside those regions, use Google Advanced Consent Mode: send cookieless measurements while analytics storage is denied, then enable full analytics storage only after the visitor accepts.
 
-The implementation uses Google tag `G-JQEG0EKW4G`. Advertising storage, advertising user data, and advertising personalization remain denied for every visitor because the site needs product analytics, not advertising features.
+The implementation uses Google tag `G-ZSD8RW67L3`. Advertising storage, advertising user data, and advertising personalization remain denied for every visitor because the site needs product analytics, not advertising features.
 
 ## Regional scope
 
