@@ -12,7 +12,7 @@
 
 ## Global Constraints
 
-- Google tag ID remains `G-JQEG0EKW4G`.
+- Google tag ID remains `G-ZSD8RW67L3`.
 - `ad_storage`, `ad_user_data`, and `ad_personalization` remain denied globally.
 - Protected regions are EU countries plus `IS`, `LI`, `NO`, `GB`, and `CH`.
 - Missing or malformed geolocation fails safely to consent-required behavior.

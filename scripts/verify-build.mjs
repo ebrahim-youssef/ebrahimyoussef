@@ -60,7 +60,7 @@ if (!html.includes('"@type":"Person"') || !html.includes('"@type":"WebSite"')) {
 
 const analyticsConsentMarkers = [
   'data-analytics-consent',
-  'G-JQEG0EKW4G',
+  'G-ZSD8RW67L3',
   'Accept analytics',
   'Decline analytics',
   'data-analytics-settings',
