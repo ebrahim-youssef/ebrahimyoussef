@@ -10,11 +10,13 @@ describe('classifyContact', () => {
     ['+20 100 123 4567', '201001234567'],
     ['0020-100-123-4567', '201001234567'],
     ['(+971) 50 123 4567', '971501234567'],
+    ['010 0123 4567', '201001234567'],
+    ['0155-123-4567', '201551234567'],
   ])('classifies %s as a WhatsApp number', (value, digits) => {
     expect(classifyContact(value)).toEqual({ kind: 'whatsapp', digits });
   });
 
-  test.each(['01001234567', 'hello', 'abc@def', '+12 34', '+1234567890123456', '+20 100 12a 4567'])('rejects %s', (value) => {
+  test.each(['0501234567', '01301234567', 'hello', 'abc@def', '+12 34', '+1234567890123456', '+20 100 12a 4567'])('rejects %s', (value) => {
     expect(classifyContact(value)).toBeNull();
   });
 });
