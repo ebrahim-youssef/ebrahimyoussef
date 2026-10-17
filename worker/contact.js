@@ -1,11 +1,11 @@
 // @ts-check
 
+import { buildContactEmail } from './contactEmail.js';
+import { classifyContact } from './contactValidation.js';
+
 const MAX_BODY_BYTES = 8192;
 const TURNSTILE_URL = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
 const EMAIL_FROM = 'website@ebrahimyoussef.com';
-const EMAIL_SUBJECT = 'New message from ebrahimyoussef.com';
-/** @type {Record<string, string>} */
-const HTML_ENTITIES = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
 /** @type {Array<['name' | 'contact' | 'message', number]>} */
 const CONTACT_FIELD_LIMITS = [
   ['name', 100],
@@ -18,7 +18,7 @@ const CONTACT_FIELD_LIMITS = [
  * @typedef {{ limit: any }} ContactLimiter
  * @typedef {{ CONTACT_EMAIL: ContactEmailBinding, CONTACT_LIMITER: ContactLimiter, TURNSTILE_SECRET_KEY: string, TURNSTILE_HOSTNAME: string, CONTACT_TO: string }} ContactEnvironment
  * @typedef {{ name?: unknown, contact?: unknown, message?: unknown, website?: unknown, token?: unknown }} ContactPayload
- * @typedef {{ to: string, from: string, subject: string, text: string, html: string, replyTo?: string }} ContactEmailMessage
+ * @typedef {{ to: string, from: { email: string, name: string }, subject: string, text: string, html: string, replyTo?: string }} ContactEmailMessage
  */
 
 /** @param {Record<string, unknown>} body @param {number} status @param {Record<string, string>} [extraHeaders] */
@@ -31,16 +31,6 @@ function jsonResponse(body, status, extraHeaders = {}) {
       ...extraHeaders,
     },
   });
-}
-
-/** @param {string} value */
-function escapeHtml(value) {
-  return value.replace(/[&<>"']/g, (character) => HTML_ENTITIES[character]);
-}
-
-/** @param {string} value */
-function isReplyToEmail(value) {
-  return /^[^\s,<>@]+@[^\s,<>@]+\.[^\s,<>@]+$/.test(value);
 }
 
 /** @param {Request} request @param {ContactEnvironment} env @returns {Promise<Response>} */
@@ -108,6 +98,7 @@ export async function handleContact(request, env) {
   }
 
   if (typeof payload.website === 'string' && payload.website.trim() !== '') {
+    console.warn('Contact honeypot filled; message dropped');
     return jsonResponse({ ok: true }, 200);
   }
 
@@ -124,12 +115,17 @@ export async function handleContact(request, env) {
     }
   }
 
+  const contact = String(payload.contact).trim();
+  const contactClassification = classifyContact(contact);
+  if (contactClassification === null) {
+    return jsonResponse({ ok: false, field: 'contact' }, 400);
+  }
+
   if (typeof payload.token !== 'string' || payload.token.trim() === '' || payload.token.length > 2048) {
     return jsonResponse({ ok: false }, 403);
   }
 
   const name = String(payload.name).trim();
-  const contact = String(payload.contact).trim();
   const message = String(payload.message).trim();
   const token = String(payload.token).trim();
   const verificationBody = new URLSearchParams({
@@ -161,17 +157,16 @@ export async function handleContact(request, env) {
     return jsonResponse({ ok: false }, 403);
   }
 
-  const text = `Name: ${name}\nContact: ${contact}\nMessage: ${message}`;
-  const html = `<p><strong>Name:</strong> ${escapeHtml(name)}</p><p><strong>Contact:</strong> ${escapeHtml(contact)}</p><p><strong>Message:</strong> ${escapeHtml(message)}</p>`;
+  const { subject, fromName, text, html } = buildContactEmail({ name, contact, message });
   /** @type {ContactEmailMessage} */
   const email = {
     to: env.CONTACT_TO,
-    from: EMAIL_FROM,
-    subject: EMAIL_SUBJECT,
+    from: { email: EMAIL_FROM, name: fromName },
+    subject,
     text,
     html,
   };
-  if (isReplyToEmail(contact)) email.replyTo = contact;
+  if (contactClassification.kind === 'email') email.replyTo = contactClassification.address;
 
   try {
     await env.CONTACT_EMAIL.send(email);
