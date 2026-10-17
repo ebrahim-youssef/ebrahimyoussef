@@ -1,0 +1,29 @@
+---
+import { landing } from '../../data/landing';
+import { type Locale } from '../../data/locale';
+import { whatsappUrl } from '../../data/contact';
+import { splitEmphasis } from '../../data/emphasis';
+import InkedName from './InkedName.astro';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const content = landing[locale];
+const { before, emphasis, after } = splitEmphasis(content.h1);
+---
+
+<section class="chapter c-ground">
+  <div class="inner hero">
+    <div>
+      <h1>{before}<em>{emphasis}</em>{after}</h1>
+      <p>{content.sub}</p>
+      <div class="ctas">
+        <a class="button" href={whatsappUrl(locale)}>{content.waButton}</a>
+        <a class="text-link" href="#work">{content.seeWork}</a>
+      </div>
+    </div>
+    <InkedName locale={locale} />
+  </div>
+</section>

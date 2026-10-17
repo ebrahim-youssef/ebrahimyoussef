@@ -1,89 +1,101 @@
-import { access, readFile, readdir } from 'node:fs/promises';
+import { access, readdir, readFile } from 'node:fs/promises';
+import { join, relative } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { checkForbidden, checkPage, checkPdf } from './buildChecks.mjs';
 
-const requiredFiles = [
-  'dist/index.html',
-  'dist/robots.txt',
-  'dist/og.png',
-  'dist/favicon.svg',
-  'dist/sitemap-index.xml',
+const projectRoot = fileURLToPath(new URL('..', import.meta.url));
+const distRoot = join(projectRoot, 'dist');
+const problems = [];
+const pageHtml = [];
+
+async function exists(path) {
+  try {
+    await access(path);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+async function filesIn(directory, extension) {
+  if (!(await exists(directory))) return [];
+  const entries = await readdir(directory, { withFileTypes: true });
+  const files = [];
+  for (const entry of entries) {
+    const path = join(directory, entry.name);
+    if (entry.isDirectory()) files.push(...(await filesIn(path, extension)));
+    else if (entry.name.endsWith(extension)) files.push(path);
+  }
+  return files;
+}
+
+async function readText(relativePath) {
+  const path = join(projectRoot, relativePath);
+  try {
+    return await readFile(path, 'utf8');
+  } catch {
+    problems.push(`${relativePath}: required file is missing or unreadable`);
+    return null;
+  }
+}
+
+async function readPage(relativePath, locale, path) {
+  const html = await readText(relativePath);
+  if (html !== null) {
+    pageHtml.push(html);
+    problems.push(...checkPage(html, { locale, path }));
+  }
+}
+
+const requiredFiles = ['dist/robots.txt', 'dist/og.png', 'dist/favicon.svg', 'dist/sitemap-index.xml'];
+for (const relativePath of requiredFiles) await readText(relativePath);
+
+const pages = [
+  ['dist/index.html', 'en', '/'],
+  ['dist/ar/index.html', 'ar', '/'],
 ];
+const hasFastabiquSource = await exists(join(projectRoot, 'src/pages/fastabiqu.astro')) || await exists(join(projectRoot, 'src/pages/fastabiqu'));
+if (hasFastabiquSource) {
+  pages.push(['dist/fastabiqu/index.html', 'en', '/fastabiqu/']);
+  pages.push(['dist/ar/fastabiqu/index.html', 'ar', '/fastabiqu/']);
+}
+for (const [relativePath, locale, path] of pages) await readPage(relativePath, locale, path);
 
-await Promise.all(requiredFiles.map((file) => access(file)));
-
-const html = await readFile('dist/index.html', 'utf8');
-const clientScriptFiles = (await readdir('dist/_astro')).filter((file) => file.endsWith('.js'));
-const clientJavaScript = [
-  html,
-  ...(await Promise.all(clientScriptFiles.map((file) => readFile(`dist/_astro/${file}`, 'utf8')))),
-].join('\n');
-const requiredText = [
-  'I build useful products, then share what I learn building them.',
-  'Build something useful',
-  'Email me about a project',
-  'Products with a purpose',
-  'Who this is for',
-  'How I can help',
-  'How the work goes',
-  'Where I share',
-];
-const requiredIds = ['work', 'audience', 'services', 'process', 'about', 'play', 'sharing', 'contact'];
-
-for (const text of requiredText) {
-  if (!html.includes(text)) throw new Error(`Missing rendered text: ${text}`);
+const htmlFiles = await filesIn(distRoot, '.html');
+for (const file of htmlFiles) {
+  const text = await readFile(file, 'utf8');
+  problems.push(...checkForbidden(text, relative(projectRoot, file)));
 }
 
-for (const id of requiredIds) {
-  if (!html.includes(`id="${id}"`)) throw new Error(`Missing rendered section: #${id}`);
+const clientScriptFiles = await filesIn(join(distRoot, '_astro'), '.js');
+for (const file of clientScriptFiles) {
+  const text = await readFile(file, 'utf8');
+  problems.push(...checkForbidden(text, relative(projectRoot, file)));
 }
 
-if (!html.includes('rel="canonical" href="https://ebrahimyoussef.com"')) {
-  throw new Error('Missing production canonical URL');
+const sitemapFiles = await filesIn(distRoot, '.xml');
+const sitemap = (await Promise.all(sitemapFiles.map((file) => readFile(file, 'utf8')))).join('\n');
+if (sitemapFiles.length > 0) {
+  if (!sitemap.includes('https://ebrahimyoussef.com/')) problems.push('dist/sitemap-index.xml: sitemap must list the English root URL');
+  if (!sitemap.includes('https://ebrahimyoussef.com/ar/')) problems.push('dist/sitemap-index.xml: sitemap must list the Arabic root URL');
 }
 
-const socialMetadata = [
-  'property="og:image"',
-  'property="og:image:alt"',
-  'name="twitter:card"',
-  'name="twitter:title"',
-  'name="twitter:description"',
-  'name="twitter:image"',
-  'name="twitter:image:alt"',
-];
-
-if (socialMetadata.some((attribute) => !html.includes(attribute))) {
-  throw new Error('Missing social metadata');
+if (await exists(join(projectRoot, 'public/cv.pdf'))) {
+  try {
+    const pdf = await readFile(join(distRoot, 'cv.pdf'));
+    problems.push(...checkPdf(pdf).map((problem) => `dist/cv.pdf: ${problem}`));
+  } catch {
+    problems.push('dist/cv.pdf: public/cv.pdf exists but the built PDF is missing or unreadable');
+  }
 }
 
-if (!html.includes('"@type":"Person"') || !html.includes('"@type":"WebSite"')) {
-  throw new Error('Missing structured data graph');
+if (pageHtml.some((html) => html.includes('1x00000000000000000000AA'))) {
+  console.log('Warning: built HTML contains the Turnstile test site key; the owner must set the real key.');
 }
 
-const analyticsConsentMarkers = [
-  'data-analytics-consent',
-  'G-ZSD8RW67L3',
-  'Accept analytics',
-  'Decline analytics',
-  'data-analytics-settings',
-];
-
-if (analyticsConsentMarkers.some((marker) => !html.includes(marker))) {
-  throw new Error('Missing consent-gated analytics controls');
+if (problems.length > 0) {
+  for (const problem of problems) console.error(problem);
+  process.exitCode = 1;
+} else {
+  console.log(`Verified ${pages.length} pages.`);
 }
-
-const advancedConsentMarkers = [
-  '/api/privacy-region',
-  'analytics_storage',
-  'ad_storage',
-  'ad_user_data',
-  'ad_personalization',
-];
-
-if (advancedConsentMarkers.some((marker) => !clientJavaScript.includes(marker))) {
-  throw new Error('Missing regional Advanced Consent Mode client behavior');
-}
-
-if (/href=""|\b(?:TBD|TODO|coming soon)\b/i.test(html)) {
-  throw new Error('Rendered page contains an empty link or placeholder copy');
-}
-
-console.log('Verified production build structure and metadata.');

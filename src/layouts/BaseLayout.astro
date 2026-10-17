@@ -1,61 +1,92 @@
 ---
 import '../styles/global.css';
-import AnalyticsConsent from '../components/AnalyticsConsent.astro';
-import { SITE, socials } from '../data/site';
-const title = SITE.title;
-const socialImage = `${SITE.url}/og.png`;
-const socialImageAlt = `${SITE.name}, product builder and front-end engineer`;
+import { DIRECTION, type Locale } from '../data/locale';
+import { EMAIL } from '../data/contact';
+import { SOCIAL_LINKS } from '../data/social';
+import {
+  alternateLinks,
+  OG_LOCALE,
+  SITE_NAME,
+  SITE_URL,
+  SKIP_LINK,
+  localizedPath,
+} from '../data/siteMeta';
+
+interface Props {
+  locale: Locale;
+  path: string;
+  title: string;
+  description: string;
+  // Page-specific schema.org nodes, added to the site-wide Person and WebSite graph.
+  structuredData?: Record<string, unknown>[];
+}
+
+const { locale, path, title, description, structuredData = [] } = Astro.props;
+const otherLocale: Locale = locale === 'en' ? 'ar' : 'en';
+const canonical = `${SITE_URL}${localizedPath(locale, path)}`;
+const socialImage = `${SITE_URL}/og.png`;
+const socialImageAlt = `${SITE_NAME[locale]}, ${title}`;
 const jsonLd = {
   '@context': 'https://schema.org',
   '@graph': [
     {
       '@type': 'Person',
-      name: SITE.name,
-      url: SITE.url,
-      email: `mailto:${SITE.email}`,
-      jobTitle: 'Front-end Engineer',
-      sameAs: socials.map((item) => item.url),
+      name: 'Ebrahim Youssef',
+      url: SITE_URL,
+      email: `mailto:${EMAIL}`,
+      jobTitle: 'Web and app developer',
+      address: { '@type': 'PostalAddress', addressCountry: 'EG' },
+      knowsLanguage: ['ar', 'en'],
+      sameAs: SOCIAL_LINKS.map((item) => item.url),
     },
-    { '@type': 'WebSite', name: SITE.name, url: SITE.url },
+    {
+      '@type': 'WebSite',
+      name: SITE_NAME[locale],
+      url: SITE_URL,
+      inLanguage: ['en', 'ar'],
+    },
+    ...structuredData,
   ],
 };
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={locale} dir={DIRECTION[locale]}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
-    <meta name="description" content={SITE.description} />
+    <meta name="description" content={description} />
     <meta name="robots" content="index, follow" />
-    <link rel="canonical" href={SITE.url} />
+    <link rel="canonical" href={canonical} />
+    {alternateLinks(path).map(({ hreflang, href }) => <link rel="alternate" hreflang={hreflang} href={href} />)}
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="icon" href="/favicon.ico" sizes="32x32" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
     <link rel="sitemap" href="/sitemap-index.xml" />
-    <meta name="theme-color" content="#c05c21" />
+    <script is:inline>document.documentElement.classList.add('js');</script>
+    <meta name="theme-color" content="#43210e" />
     <meta property="og:type" content="website" />
-    <meta property="og:site_name" content={SITE.name} />
-    <meta property="og:locale" content="en_US" />
+    <meta property="og:site_name" content={SITE_NAME[locale]} />
+    <meta property="og:locale" content={OG_LOCALE[locale]} />
+    <meta property="og:locale:alternate" content={OG_LOCALE[otherLocale]} />
     <meta property="og:title" content={title} />
-    <meta property="og:description" content={SITE.description} />
-    <meta property="og:url" content={SITE.url} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
     <meta property="og:image" content={socialImage} />
     <meta property="og:image:alt" content={socialImageAlt} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
-    <meta name="twitter:description" content={SITE.description} />
+    <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={socialImage} />
     <meta name="twitter:image:alt" content={socialImageAlt} />
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} is:inline />
   </head>
   <body>
-    <a class="skip-link" href="#main">Skip to content</a>
+    <a class="skip-link" href="#main">{SKIP_LINK[locale]}</a>
     <slot />
-    {import.meta.env.PROD && <AnalyticsConsent />}
   </body>
 </html>

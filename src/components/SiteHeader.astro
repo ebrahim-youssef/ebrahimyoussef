@@ -1,36 +1,60 @@
 ---
+import { type Locale } from '../data/locale';
+import { landing } from '../data/landing';
+import { SITE_NAME, localizedPath } from '../data/siteMeta';
 import Monogram from './Monogram.astro';
-import { SITE } from '../data/site';
+
+interface Props {
+  locale: Locale;
+  // Section links on pages other than the landing page point back to its anchors.
+  sectionBase?: string;
+  path?: string;
+}
+
+const { locale, sectionBase = '', path = '/' } = Astro.props;
+const otherLocale: Locale = locale === 'en' ? 'ar' : 'en';
+const content = landing[locale];
 ---
 
-<header class="site-header">
-  <div class="wrap header-inner">
-    <a class="brand" href="#top" aria-label={`${SITE.name}, back to top`}>
-      <Monogram size={36} />
-      <span>{SITE.name}</span>
-    </a>
-    <nav aria-label="Primary navigation">
-      <ul>
-        {SITE.navigation.map((item) => <li><a href={item.href}>{item.label}</a></li>)}
-      </ul>
-    </nav>
-    <a class="header-contact" href={SITE.emailUrl}>Email me</a>
+<header id="top" class="top">
+  <a class="mark" href="#top" aria-label={SITE_NAME[locale]}>
+    <Monogram size={40} />
+  </a>
+  <nav aria-label={content.navLabel}>
+    {content.nav.map((item) => (
+      <a href={`${sectionBase}#${item.id}`}>
+        {item.label}
+        {'ar' in item && item.ar && <span lang="ar" aria-hidden="true">{item.ar}</span>}
+      </a>
+    ))}
+  </nav>
+  <div class="side">
+    <a
+      class="lang"
+      href={localizedPath(otherLocale, path)}
+      lang={otherLocale}
+      hreflang={otherLocale}
+    >{content.switchLabel}</a>
   </div>
 </header>
 
 <style>
-  .site-header { position: relative; z-index: 20; padding-block: 1rem; }
-  .header-inner { display: flex; align-items: center; gap: 1.5rem; }
-  .brand { min-height: 2.75rem; display: inline-flex; align-items: center; gap: .7rem; color: var(--color-text); font-weight: 650; text-decoration: none; white-space: nowrap; }
-  nav { margin-inline: auto; }
-  ul { display: flex; align-items: center; gap: clamp(.8rem, 2vw, 1.5rem); margin: 0; padding: 0; list-style: none; }
-  nav a { min-width: 2.75rem; min-height: 2.75rem; display: inline-flex; align-items: center; justify-content: center; padding-inline: .15rem; color: var(--color-neutral-700); font-size: .88rem; font-weight: 550; text-decoration: none; }
-  .header-contact { min-height: 2.75rem; display: inline-flex; align-items: center; color: var(--color-text); font-size: .88rem; font-weight: 650; text-underline-offset: .3rem; white-space: nowrap; }
-  @media (hover: hover) and (pointer: fine) { nav a:hover { color: var(--color-accent-700); } }
-  @media (max-width: 48rem) {
-    .header-inner { flex-wrap: wrap; }
-    nav { order: 3; width: 100%; overflow-x: auto; scrollbar-width: none; }
-    ul { width: max-content; min-width: 100%; justify-content: space-between; }
+  .top { display: flex; justify-content: space-between; align-items: center; gap: 16px 28px; flex-wrap: wrap; background: var(--ground); padding: 40px 6vw 0; }
+  .top .mark { background: var(--cream); padding: 6px 8px; display: flex; }
+  .top .mark img { width: 40px; height: auto; display: block; }
+  .top nav { display: flex; gap: 6px 22px; font-size: 15px; flex-wrap: wrap; flex: 1; justify-content: center; }
+  .top nav a, .top .side a { text-decoration: none; display: grid; text-align: center; line-height: 1.25; padding-block: 4px; }
+  .top nav a:hover, .top .side a:hover { text-decoration: underline; }
+  .top nav a span, .top .side a span { font: 400 13px var(--kufi); color: var(--gold); }
+  .top .side { display: flex; gap: 18px; align-items: center; font-size: 15px; }
+  .top .side .lang { border: 1px solid #f7f1e855; padding: 6px 12px; }
+  @media (max-width: 960px) {
+    .top nav { order: 3; flex-basis: 100%; justify-content: flex-start; }
   }
-  @media (max-width: 27rem) { .brand span { display: none; } }
+  @media (max-width: 860px) {
+    .top { padding: 28px 16px 0; }
+    .top nav { gap: 18px; font-size: 14px; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin-inline: -16px; padding-inline: 16px; mask-image: linear-gradient(to var(--fade-to, left), transparent, #000 24px); }
+    [dir="rtl"] .top nav { --fade-to: right; }
+    .top nav a { flex: none; }
+  }
 </style>

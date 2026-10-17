@@ -1,0 +1,121 @@
+<!doctype html>
+<!-- Print source for public/cv.pdf. Regenerate by hand after any edit:
+     msedge --headless=new --no-pdf-header-footer --print-to-pdf=public/cv.pdf scripts/cv/cv.html
+     The text comes from the owner's base CV, with the location kept to the country. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Ebrahim Youssef, CV</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@300;400;600;700&family=Aref+Ruqaa:wght@700&display=swap">
+<style>
+  @page { size: A4; margin: 10mm 14mm; }
+  :root { --ink: #2b2118; --muted: #5a5047; --rust: #934312; --gold: #c9a227; --line: #e6dccd; }
+  * { box-sizing: border-box; }
+  body { margin: 0; color: var(--ink); font: 400 9pt/1.36 "Readex Pro", "Segoe UI", sans-serif; }
+  a { color: inherit; text-decoration: none; }
+  header { display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 6mm; padding-bottom: 3.5mm; border-bottom: 1.2pt solid var(--ink); }
+  h1 { margin: 0; font: 700 22pt/1.1 "Readex Pro", sans-serif; letter-spacing: -.02em; }
+  .role { margin: 1.2mm 0 0; font-weight: 600; color: var(--rust); }
+  .ar { font: 700 20pt/1 "Aref Ruqaa", serif; color: var(--gold); }
+  .contact { margin: 2.6mm 0 0; display: flex; flex-wrap: wrap; gap: 1mm 4.5mm; font-size: 8.6pt; color: var(--muted); }
+  h2 { margin: 3.8mm 0 1.3mm; font: 700 8.2pt/1.2 "Readex Pro", sans-serif; text-transform: uppercase; letter-spacing: .12em; color: var(--rust); }
+  p { margin: 0; }
+  .job { margin-top: 2mm; break-inside: avoid; }
+  .job:first-of-type { margin-top: 0; }
+  .job-head { display: flex; justify-content: space-between; gap: 4mm; font-weight: 600; }
+  .job-head span { font-weight: 400; color: var(--muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .job .note { color: var(--muted); font-size: 8.8pt; }
+  ul { margin: .8mm 0 0; padding-inline-start: 4mm; }
+  li { margin-top: .3mm; }
+  li::marker { color: var(--gold); }
+  .skills { display: grid; grid-template-columns: 31mm 1fr; gap: .5mm 3mm; }
+  .skills b { font-weight: 600; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 6mm; }
+</style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>Ebrahim Youssef</h1>
+      <p class="role">Full-Stack Engineer · Product Engineer · React, TypeScript, React Native, Node.js</p>
+      <p class="contact">
+        <span>Egypt · open to remote, hybrid or on-site</span>
+        <a href="mailto:me@ebrahimyoussef.com">me@ebrahimyoussef.com</a>
+        <a href="https://wa.me/201287877420">+20 128 787 7420</a>
+        <a href="https://ebrahimyoussef.com">ebrahimyoussef.com</a>
+        <a href="https://github.com/ebrahim-youssef">github.com/ebrahim-youssef</a>
+        <a href="https://www.linkedin.com/in/ebrahimyoussef391">linkedin.com/in/ebrahimyoussef391</a>
+      </p>
+    </div>
+    <div class="ar" lang="ar" aria-hidden="true">إبراهيم يوسف</div>
+  </header>
+
+  <h2>Summary</h2>
+  <p>Full-stack engineer working mostly in React and TypeScript, with backend experience in Node.js, PostgreSQL and Cloudflare Workers. I built Fastabiqu, a mobile app and website that share one codebase, and I handled its scope, UX, architecture, tests and releases myself. Most of what I build is Arabic-first, so RTL layouts are part of my normal work.</p>
+
+  <h2>Experience</h2>
+  <div class="job">
+    <div class="job-head">Independent Product Engineer, Fastabiqu <span>Jul 2026 to present</span></div>
+    <p class="note">Live at <a href="https://fastabiqu.ebrahimyoussef.com">fastabiqu.ebrahimyoussef.com</a>. The Android version finished closed testing on Google Play with 12+ testers, and the release is being prepared.</p>
+    <ul>
+      <li>Built a free Arabic-first quiz game for families as one TypeScript codebase for Android, iOS and web, using Expo, React Native, Expo Router, NativeWind and Zustand.</li>
+      <li>Shipped local multiplayer for 2 to 6 players on one device, a daily challenge, and progress tracking with XP, levels and achievements. The game has 375 reviewed questions.</li>
+      <li>Built the content pipeline on a Cloudflare Worker with versioning, ETags, SHA-256 integrity checks and a last-known-good fallback, so new questions reach players without an app update.</li>
+      <li>Wrote Jest, Testing Library and fast-check property tests and put them behind CI quality gates. Shipped builds with EAS Build and EAS Update.</li>
+      <li>Made the product decisions (scope, user flows, design system) and recorded architecture choices as ADRs.</li>
+    </ul>
+  </div>
+  <div class="job">
+    <div class="job-head">Software Developer, Islamic Educational Institution <span>Mar 2026 to May 2026</span></div>
+    <ul>
+      <li>Built Arabic-first workflows for tracking student progress and weekly assessments.</li>
+      <li>Worked on the UI, API contracts, validation, authentication and the PostgreSQL/Prisma data layer.</li>
+      <li>Built small internal tools on top of Excel and Telegram for the operations team.</li>
+    </ul>
+  </div>
+  <div class="job">
+    <div class="job-head">Mandatory Military Service, Egypt <span>Jul 2024 to Dec 2025</span></div>
+  </div>
+  <div class="job">
+    <div class="job-head">Front-End / Full-Stack Developer, AFDV Marketing <span>Jan 2023 to Jul 2023</span></div>
+    <ul>
+      <li>Built a Next.js e-commerce website from Figma designs, with a Django backend.</li>
+      <li>Built an internal CMS and an event calendar with a small team.</li>
+    </ul>
+  </div>
+  <div class="job">
+    <div class="job-head">Freelance React Developer, Upwork <span>2022</span></div>
+    <ul>
+      <li>Two short projects: a responsive content-calendar UI built from PSD designs, and a JavaScript library integration in a Next.js app.</li>
+    </ul>
+  </div>
+
+  <h2>Projects</h2>
+  <div class="job">
+    <div class="job-head">Quote Vault <span><a href="https://github.com/ebrahim-youssef/quote-vault">github.com/ebrahim-youssef/quote-vault</a></span></div>
+    <p>Full-stack web app built with Next.js, TypeScript, Prisma, PostgreSQL and NextAuth. Includes i18n and light and dark themes.</p>
+  </div>
+
+  <h2>Skills</h2>
+  <div class="skills">
+    <b>Frontend</b><span>React, TypeScript, JavaScript, Next.js, Tailwind CSS, shadcn/ui, RTL/Arabic UI, accessibility</span>
+    <b>Mobile</b><span>React Native, Expo, Expo Router, EAS</span>
+    <b>Backend</b><span>Node.js, Express, REST APIs, authentication, PostgreSQL, Prisma, Supabase, Cloudflare Workers</span>
+    <b>Testing, delivery</b><span>Jest, Testing Library, fast-check, ESLint, GitHub Actions, Vercel</span>
+    <b>Product</b><span>MVP scoping, user flows, specs, ADRs, release management</span>
+  </div>
+
+  <div class="two">
+    <div>
+      <h2>Certifications</h2>
+      <p>Advanced Full-Stack Web Development Nanodegree, Udacity (2022)<br>React Development Cross-Skilling Nanodegree, Udacity (2022)<br>Web Development Challenger, Udacity (2021)</p>
+    </div>
+    <div>
+      <h2>Languages</h2>
+      <p>Arabic (native), English (fluent)</p>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,34 @@
+---
+import { landing } from '../../data/landing';
+import { type Locale } from '../../data/locale';
+import { SOCIAL_LINKS } from '../../data/social';
+import Arrow from './Arrow.astro';
+
+interface Props {
+  locale: Locale;
+}
+
+const ABOUT_GHOST: Record<Locale, string> = { en: 'رحلتي', ar: 'رحلتي' };
+const { locale } = Astro.props;
+const content = landing[locale];
+const linkedinUrl = SOCIAL_LINKS.find((link) => link.id === 'linkedin')?.url;
+---
+
+<section class="chapter c-sage" id="about" aria-labelledby="about-title">
+  <div class="ghost" aria-hidden="true" lang="ar">{ABOUT_GHOST[locale]}</div>
+  <div class="inner about">
+    <div>
+      <h2 id="about-title">{content.aboutTitle}</h2>
+      <p>{content.about}</p>
+      <div class="links">
+        <a class="button" href={content.cv.href}>{content.cv.label}</a>
+        {linkedinUrl && <a href={linkedinUrl}>LinkedIn<Arrow /></a>}
+      </div>
+    </div>
+    <ol class="timeline">
+      {content.journey.map((entry) => (
+        <li><time>{entry.when}</time><b>{entry.title}</b><span>{entry.text}</span></li>
+      ))}
+    </ol>
+  </div>
+</section>

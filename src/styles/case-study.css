@@ -1,0 +1,74 @@
+/* The case study reads top to bottom, so its parts stack like the landing chapters but never pin:
+   a pinned part taller than the screen would hide the text being read. */
+.story-hero { padding: 24px 6vw 96px; }
+.story-part {
+  position: relative;
+  margin-top: -30px;
+  padding: 24px 6vw 104px;
+  border-radius: 30px 30px 0 0;
+  box-shadow: 0 -24px 50px -20px #000b;
+}
+.story-part:last-child { padding-bottom: 80px; }
+
+.back { display: inline-flex; align-items: center; gap: .5em; font-size: 15px; color: var(--soft); text-decoration: none; padding-block: 8px; }
+.back:hover { text-decoration: underline; }
+.back-arrow { width: 1em; height: 1em; transform: scaleX(var(--mirror)); }
+
+.story-head { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 4fr); gap: 56px; align-items: center; margin-top: 32px; }
+.painted { margin: 0 0 4px; font: 700 clamp(64px, 9vw, 128px)/1.2 var(--ruqaa); color: var(--gold-line); }
+.story h1 { font-size: clamp(32px, 4vw, 54px); max-width: 20ch; }
+.lede { margin: 0 0 22px; color: var(--soft); font-size: 19px; max-width: 34em; }
+.c-ink .lede { color: #e7e2d4; }
+.state { display: flex; gap: 12px; align-items: baseline; margin: 0 0 28px; font-size: 15px; font-weight: 600; color: var(--gold); max-width: 36em; }
+.state .dot { flex: none; width: 10px; height: 10px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 0 4px #deaf5933; }
+
+.shot { margin: 0; padding: 18px 18px 14px; justify-self: center; width: min(100%, 320px); }
+.shot img { display: block; width: 100%; height: auto; }
+.shot figcaption { margin-top: 12px; font-size: 14px; line-height: 1.5; color: var(--muted); }
+
+.story-hero .facts { margin-top: 56px; gap: 22px; }
+.story-hero .facts li { color: var(--ink); }
+
+.columns { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 4fr); gap: 64px; align-items: start; }
+.columns.even { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.columns .shot { margin-top: 72px; }
+.prose { max-width: 36em; }
+.prose h2 { font-size: clamp(28px, 3.2vw, 44px); margin: 64px 0 20px; }
+.prose h2 + p { margin-top: 0; }
+.prose p { margin: 0 0 18px; }
+.prose h3 { font: 600 15px/1.4 var(--body); margin: 32px 0 6px; text-transform: uppercase; letter-spacing: .08em; }
+:lang(ar) .prose h3 { text-transform: none; letter-spacing: 0; font-size: 17px; }
+.c-cream .prose p { color: #4d433a; }
+.c-sage .prose p, .c-sage .roles { color: #e7e2d4; }
+.tools { font-size: 16px; }
+
+.flow { list-style: none; margin: 48px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 56px; counter-reset: flow; }
+.flow li { counter-increment: flow; display: grid; gap: 8px; align-content: start; }
+.flow li b { font: 700 22px/1.3 var(--body); color: var(--rust-ink); }
+.flow li b::before { content: counter(flow) ". "; color: var(--gold-ink); }
+:lang(ar) .flow li b::before { content: counter(flow, arabic-indic) ". "; }
+.flow li span { font-size: 16px; line-height: 1.6; color: var(--muted); }
+/* The arrow between steps sits in the gap and points along the reading direction. */
+.flow li:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  inset-inline-end: -44px;
+  width: 30px;
+  height: 2px;
+  background: var(--gold);
+}
+
+.roles { margin: 0; padding: 0; list-style: none; display: grid; gap: 14px; }
+.roles li { position: relative; padding-inline-start: 26px; }
+.roles li::before { content: ''; position: absolute; inset-inline-start: 0; top: .7em; width: 12px; height: 2px; background: var(--gold); }
+
+@media (max-width: 860px) {
+  .story-hero { padding: 16px 16px 72px; }
+  .story-part { padding: 8px 16px 88px; border-radius: 22px 22px 0 0; }
+  .story-head, .columns, .columns.even { grid-template-columns: minmax(0, 1fr); gap: 40px; }
+  .columns .shot { margin-top: 0; }
+  .prose h2 { margin-top: 48px; }
+  .flow { grid-template-columns: minmax(0, 1fr); gap: 48px; }
+  .flow li:not(:last-child)::after { top: auto; bottom: -36px; inset-inline-end: auto; inset-inline-start: 50%; width: 2px; height: 26px; }
+}
