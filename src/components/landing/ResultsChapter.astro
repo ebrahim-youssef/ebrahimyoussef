@@ -1,0 +1,30 @@
+---
+import { landing } from '../../data/landing';
+import { type Locale } from '../../data/locale';
+
+interface Props {
+  locale: Locale;
+}
+
+const RESULTS_GHOST: Record<Locale, string> = { en: 'نتائج', ar: 'نتائج' };
+const { locale } = Astro.props;
+const content = landing[locale];
+---
+
+<section class="chapter c-rust" id="results" aria-labelledby="results-title">
+  <div class="ghost" aria-hidden="true" lang="ar">{RESULTS_GHOST[locale]}</div>
+  <div class="inner">
+    <h2 id="results-title">{content.resultsTitle}</h2>
+    <ul class="stats">
+      {content.results.map((result, index) => (
+        <li style={`transition-delay:${index * 0.06}s`}>
+          <b>{result.big}</b>
+          <div>
+            <small>{result.who}</small>
+            <p>{result.text}</p>
+          </div>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>

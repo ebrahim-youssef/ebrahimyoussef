@@ -1,0 +1,87 @@
+---
+import { CAL_URL, EMAIL, TURNSTILE_SITE_KEY, whatsappUrl } from '../../data/contact';
+import { landing } from '../../data/landing';
+import { type Locale } from '../../data/locale';
+import { LANDING_SOCIAL_IDS, SOCIAL_LABEL, SOCIAL_LINKS } from '../../data/social';
+import Arrow from './Arrow.astro';
+
+interface Props {
+  locale: Locale;
+}
+
+const CONTACT_GHOST: Record<Locale, string> = { en: 'تواصل', ar: 'تواصل' };
+const { locale } = Astro.props;
+const content = landing[locale];
+const socialLinks = LANDING_SOCIAL_IDS.map((id) => SOCIAL_LINKS.find((link) => link.id === id)).filter(
+  (link): link is (typeof SOCIAL_LINKS)[number] => Boolean(link),
+);
+---
+
+<section class="chapter c-ink" id="contact" aria-labelledby="contact-title">
+  <div class="ghost" aria-hidden="true" lang="ar">{CONTACT_GHOST[locale]}</div>
+  <div class="inner">
+    <div class="contact">
+      <div>
+        <h2 id="contact-title">{content.contactTitle}</h2>
+        <div class="ctas">
+          <a class="button" href={whatsappUrl(locale)}>{content.waButton}</a>
+          {CAL_URL && <a class="button ghost-button" href={CAL_URL}>{content.bookCall}</a>}
+        </div>
+        <div class="route-email">
+          <small>{content.orEmail}</small>
+          <a class="mail" id="mail" href={`mailto:${EMAIL}`} dir="ltr">{EMAIL}</a><br />
+          <button
+            class="copy"
+            type="button"
+            id="copy"
+            data-copied={content.copied}
+            data-copy-fallback={content.copyFallback}
+          >{content.copy}</button>
+          <p class="noscript-note"><noscript>{content.formNeedsScript}</noscript></p>
+        </div>
+        <ul class="social">
+          {socialLinks.map((link) => (
+            <li><a href={link.url}>{SOCIAL_LABEL[locale][link.id]}<Arrow /></a></li>
+          ))}
+        </ul>
+      </div>
+      <form
+        class="clip"
+        id="form"
+        novalidate
+        method="post"
+        action="/api/contact"
+        data-sending={content.sending}
+        data-sent={content.sent}
+        data-failed={content.failed}
+        data-send={content.send}
+        data-error-name={content.fieldErrors.name}
+        data-error-contact={content.fieldErrors.contact}
+        data-error-message={content.fieldErrors.message}
+      >
+        <h3>{content.formTitle}</h3>
+        <div class="field">
+          <label for="f-name">{content.fields.name}</label>
+          <input id="f-name" name="name" required maxlength="100" autocomplete="name" aria-describedby="e-name" />
+          <span class="error" id="e-name"></span>
+        </div>
+        <div class="field">
+          <label for="f-contact">{content.fields.contact}</label>
+          <input id="f-contact" name="contact" required maxlength="200" autocomplete="email" aria-describedby="e-contact" />
+          <span class="error" id="e-contact"></span>
+        </div>
+        <div class="field">
+          <label for="f-message">{content.fields.message}</label>
+          <textarea id="f-message" name="message" required maxlength="3000" aria-describedby="e-message"></textarea>
+          <span class="error" id="e-message"></span>
+        </div>
+        <div class="hp" aria-hidden="true"><label>Website<input name="website" tabindex="-1" autocomplete="off" /></label></div>
+        <div class="cf-turnstile" data-sitekey={TURNSTILE_SITE_KEY} data-language={locale} data-theme="light"></div>
+        <button class="button" type="submit">{content.send}</button>
+        <p class="status" id="status" role="status" aria-live="polite"></p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<script async defer is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js"></script>

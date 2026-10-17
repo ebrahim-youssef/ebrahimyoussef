@@ -1,0 +1,160 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Footer from '../Footer.astro';
+import SiteHeader from '../SiteHeader.astro';
+import Arrow from '../landing/Arrow.astro';
+import { whatsappUrl, EMAIL } from '../../data/contact';
+import { fastabiqu, type ShotId } from '../../data/fastabiqu';
+import { landing } from '../../data/landing';
+import type { Locale } from '../../data/locale';
+import { localizedPath, SITE_URL } from '../../data/siteMeta';
+import homeShot from '../../assets/fastabiqu/home.png';
+import challengesShot from '../../assets/fastabiqu/challenges.png';
+import '../../styles/landing.css';
+import '../../styles/case-study.css';
+
+interface Props {
+  locale: Locale;
+}
+
+const PATH = '/fastabiqu/';
+const SHOTS = { home: homeShot, challenges: challengesShot } satisfies Record<ShotId, ImageMetadata>;
+const FACT_TILTS = ['-1.2deg', '1.4deg', '-.6deg', '1deg'];
+
+const { locale } = Astro.props;
+const content = fastabiqu[locale];
+const shared = landing[locale];
+const home = localizedPath(locale, '/');
+const [firstShot, secondShot] = content.shots;
+const structuredData = [
+  {
+    '@type': 'Article',
+    headline: content.h1,
+    description: content.description,
+    inLanguage: locale,
+    url: `${SITE_URL}${localizedPath(locale, PATH)}`,
+    author: { '@type': 'Person', name: 'Ebrahim Youssef', url: SITE_URL },
+    about: {
+      '@type': 'SoftwareApplication',
+      name: 'Fastabiqu',
+      alternateName: 'فاستبقوا',
+      applicationCategory: 'GameApplication',
+      // Only where players can get it today; the Google Play release is still being prepared.
+      operatingSystem: 'Web',
+      url: content.links[0].href,
+      offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+    },
+  },
+];
+---
+
+<BaseLayout locale={locale} path={PATH} title={content.title} description={content.description} structuredData={structuredData}>
+  <SiteHeader locale={locale} sectionBase={home} path={PATH} />
+  <main id="main" class="story">
+    <section class="story-hero c-ground" aria-labelledby="story-title">
+      <div class="inner">
+        <a class="back" href={home}>
+          <svg class="back-arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M14 8H3m5-5L3 8l5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="square" /></svg>
+          {content.back}
+        </a>
+        <div class="story-head">
+          <div>
+            <p class="painted" lang="ar" aria-hidden="true">فاستبقوا</p>
+            <h1 id="story-title">{content.h1}</h1>
+            <p class="lede">{content.lede}</p>
+            <p class="state"><span class="dot" aria-hidden="true"></span>{content.status}</p>
+            <div class="ctas">
+              {content.links.map((link, index) => (
+                <a class={index === 0 ? 'button' : 'text-link'} href={link.href}>{link.label}<Arrow /></a>
+              ))}
+            </div>
+          </div>
+          <figure class="clip shot" style="--r:2deg">
+            <Image src={SHOTS[firstShot.id]} alt={firstShot.alt} widths={[320, 560]} sizes="(max-width: 860px) 80vw, 320px" />
+            <figcaption>{firstShot.caption}</figcaption>
+          </figure>
+        </div>
+        <ul class="facts">
+          {content.facts.map((fact, index) => (
+            <li style={`--r:${FACT_TILTS[index]}`}><b>{fact.value}</b>{fact.label}</li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    <section class="story-part c-cream" aria-labelledby="audience-title">
+      <div class="inner columns">
+        <div class="prose">
+          <h2 id="audience-title">{content.audienceTitle}</h2>
+          {content.audience.map((paragraph) => <p>{paragraph}</p>)}
+          <h2>{content.localTitle}</h2>
+          {content.local.map((paragraph) => <p>{paragraph}</p>)}
+        </div>
+        <figure class="clip shot" style="--r:-1.6deg">
+          <Image src={SHOTS[secondShot.id]} alt={secondShot.alt} widths={[320, 560]} sizes="(max-width: 860px) 80vw, 320px" />
+          <figcaption>{secondShot.caption}</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="story-part c-deep" aria-labelledby="pipeline-title">
+      <div class="inner">
+        <div class="prose">
+          <h2 id="pipeline-title">{content.pipelineTitle}</h2>
+          {content.pipeline.map((paragraph) => <p>{paragraph}</p>)}
+        </div>
+        <ol class="flow">
+          {content.pipelineSteps.map((step, index) => (
+            <li class="clip" style={`--r:${FACT_TILTS[index]}`}>
+              <b>{step.title}</b>
+              <span>{step.text}</span>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+
+    <section class="story-part c-gold" aria-labelledby="arabic-title">
+      <div class="inner columns even">
+        <div class="prose">
+          <h2 id="arabic-title">{content.arabicTitle}</h2>
+          {content.arabic.map((paragraph) => <p>{paragraph}</p>)}
+        </div>
+        <div class="prose">
+          <h2>{content.testingTitle}</h2>
+          {content.testing.map((paragraph) => <p>{paragraph}</p>)}
+        </div>
+      </div>
+    </section>
+
+    <section class="story-part c-sage" aria-labelledby="roles-title">
+      <div class="inner columns even">
+        <div class="prose">
+          <h2 id="roles-title">{content.rolesTitle}</h2>
+          <ul class="roles">
+            {content.roles.map((role) => <li>{role}</li>)}
+          </ul>
+        </div>
+        <div class="prose">
+          <h2>{content.tradeoffTitle}</h2>
+          <p>{content.tradeoff}</p>
+          <h3>{content.toolsTitle}</h3>
+          <p class="tools">{content.tools}</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="story-part c-ink" aria-labelledby="cta-title">
+      <div class="inner">
+        <h2 id="cta-title">{content.ctaTitle}</h2>
+        <p class="lede">{content.ctaText}</p>
+        <div class="ctas">
+          <a class="button" href={whatsappUrl(locale)}>{shared.waButton}</a>
+          <a class="text-link" href={`mailto:${EMAIL}`} dir="ltr">{EMAIL}</a>
+        </div>
+      </div>
+    </section>
+  </main>
+  <Footer locale={locale} path={PATH} />
+</BaseLayout>

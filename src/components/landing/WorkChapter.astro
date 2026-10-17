@@ -1,0 +1,57 @@
+---
+import { landing } from '../../data/landing';
+import { type Locale } from '../../data/locale';
+import { localizedPath } from '../../data/siteMeta';
+import Arrow from './Arrow.astro';
+
+interface Props {
+  locale: Locale;
+}
+
+const WORK_GHOST: Record<Locale, string> = { en: 'أعمال', ar: 'أعمال' };
+const TILTS = ['-1.2deg', '1.2deg', '-.8deg', '1.8deg', '-1.4deg', '.9deg'];
+const { locale } = Astro.props;
+const content = landing[locale];
+
+function localizedLink(href: string): string {
+  if (!href.startsWith('/') || href === '/cv.pdf') return href;
+  return localizedPath(locale, href);
+}
+---
+
+<section class="chapter c-deep" id="work" aria-labelledby="work-title">
+  <div class="paint" aria-hidden="true" lang="ar">{WORK_GHOST[locale]}</div>
+  <div class="inner">
+    <h2 id="work-title">{content.workTitle}</h2>
+    <div class="clips">
+      {content.work.map((work, index) => (
+        <article
+          class:list={['clip', 'reveal', index === 0 && 'lead']}
+          style={`--r:${TILTS[index]};transition-delay:${(index % 3) * 0.1}s`}
+        >
+          {'ar' in work && <span class="ar" lang="ar">{work.ar}</span>}
+          <h3>{work.name}</h3>
+          <small>{work.who}</small>
+          <p>{work.text}</p>
+          {work.facts && (
+            <ul class="facts">
+              {work.facts.map((fact, factIndex) => (
+                <li style={`--r:${TILTS[factIndex + 1]}`}><b>{fact.value}</b>{fact.label}</li>
+              ))}
+            </ul>
+          )}
+          {work.links && (
+            <div class="links">
+              {work.links.map((link) => (
+                <a href={localizedLink(link.href)}>
+                  {link.label}
+                  {link.href.startsWith('https://') && <Arrow />}
+                </a>
+              ))}
+            </div>
+          )}
+        </article>
+      ))}
+    </div>
+  </div>
+</section>

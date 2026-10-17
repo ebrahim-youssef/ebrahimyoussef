@@ -14,14 +14,14 @@ importers:
       '@astrojs/sitemap':
         specifier: ^3.7.3
         version: 3.7.3
-      '@fontsource-variable/figtree':
-        specifier: ^5.3.0
+      '@fontsource-variable/readex-pro':
+        specifier: 5.3.0
         version: 5.3.0
-      '@fontsource-variable/rubik':
-        specifier: ^5.3.0
+      '@fontsource-variable/reem-kufi':
+        specifier: 5.3.0
         version: 5.3.0
-      '@fontsource/caprasimo':
-        specifier: ^5.3.0
+      '@fontsource/aref-ruqaa':
+        specifier: 5.3.0
         version: 5.3.0
       '@types/react':
         specifier: ^19.2.18
@@ -564,14 +564,14 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@fontsource-variable/figtree@5.3.0':
-    resolution: {integrity: sha512-VRVodD7OiG7apQwE8/2fMjaqpY/a0qRJqL5HtYj8CKIVps+9amaFcdfKmDIf7iqYQx6iPLlArVXAfKeIZmVcNQ==}
+  '@fontsource-variable/readex-pro@5.3.0':
+    resolution: {integrity: sha512-ebrEcz8sjzQk92x6K3WtYzOgEKTIDe5D+iPqef0YYvPdqCfxzVkRgpsog5POX4sWa7e4wccCQ1IhmMuRka2hZg==}
 
-  '@fontsource-variable/rubik@5.3.0':
-    resolution: {integrity: sha512-yQUf8qle24MJYA+EuauyF+cqjjN6I715nGjitt3sGmwZA0XfA4fWJcLq1C/diREZl4Qzn1E80nLMc0ipC/a4Lg==}
+  '@fontsource-variable/reem-kufi@5.3.0':
+    resolution: {integrity: sha512-Q2MbKKWX2JVUIGbs0GTdFp2GTahGmink5mFCo7kKLPYfbY9S8xdvCFC+eMSDI33jj8Cvox5QpWrifTUQol07iw==}
 
-  '@fontsource/caprasimo@5.3.0':
-    resolution: {integrity: sha512-cJGLwG71NFriSJZjsFkv+7/Hdev+vMoCaZIf5TLKS41aGSRuLTgh8Uul5vF+YKX4S89FtwLtOOD8HJV1+0NDjQ==}
+  '@fontsource/aref-ruqaa@5.3.0':
+    resolution: {integrity: sha512-GC+ckm4v2zndUWuR2JiMdO333mNZqrzxHN/9rpBJhLwDwcwYXzr+GzCRzgK6afGMhYnV0pwrqeGeLm4ZNmWhWQ==}
 
   '@img/colour@1.1.0':
     resolution: {integrity: sha512-Td76q7j57o/tLVdgS746cYARfSyxk8iEfRxewL9h4OMzYhbW4TAcppl0mT4eyqXddh6L/jwoM75mo7ixa/pCeQ==}
@@ -2916,11 +2916,11 @@ snapshots:
   '@esbuild/win32-x64@0.28.1':
     optional: true
 
-  '@fontsource-variable/figtree@5.3.0': {}
+  '@fontsource-variable/readex-pro@5.3.0': {}
 
-  '@fontsource-variable/rubik@5.3.0': {}
+  '@fontsource-variable/reem-kufi@5.3.0': {}
 
-  '@fontsource/caprasimo@5.3.0': {}
+  '@fontsource/aref-ruqaa@5.3.0': {}
 
   '@img/colour@1.1.0': {}
 

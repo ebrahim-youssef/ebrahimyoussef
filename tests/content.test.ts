@@ -2,10 +2,12 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, test } from 'vitest';
-import { SITE, socials, socialUrl } from '../src/data/site';
-import { products } from '../src/data/products';
+import { CAL_URL, WHATSAPP_MESSAGE, WHATSAPP_NUMBER, whatsappUrl } from '../src/data/contact';
+import { LOCALES, type Locale } from '../src/data/locale';
+import { LANDING_SOCIAL_IDS, SOCIAL_LINKS } from '../src/data/social';
+import { landing } from '../src/data/landing';
 
-const placeholderPattern = /—|\b(?:coming soon|tbd|todo|passionate|world-class|cutting-edge|rockstar|seamless|leverage|showcase|pixel-perfect|high-converting|industry-leading)\b/i;
+const bannedCopyPattern = /[—–]|\b(?:coming soon|tbd|todo|passionate|world-class|cutting-edge|rockstar|seamless|leverage|showcase|pixel-perfect|high-converting|industry-leading)\b/i;
 
 const sourceRoot = fileURLToPath(new URL('../src/', import.meta.url));
 
@@ -22,90 +24,89 @@ function sourceFiles(dir: string): string[] {
 const withoutComments = (source: string) =>
   source.replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/(?:^|\s)\/\/.*$/gm, ' ');
 
+const sourceSnapshot = sourceFiles(sourceRoot).map((path) => ({
+  path,
+  source: withoutComments(readFileSync(path, 'utf8')),
+}));
+
+function contentLinks(locale: Locale): string[] {
+  return [
+    landing[locale].cv.href,
+    ...landing[locale].work.flatMap((work) => work.links?.map((link) => link.href) ?? []),
+  ];
+}
+
 describe('portfolio content contract', () => {
-  test('keeps contact routes valid', () => {
-    expect(SITE.url).toMatch(/^https:\/\//);
-    expect(SITE.email).toMatch(/^[^@\s]+@[^@\s]+\.[^@\s]+$/);
-    expect(SITE.emailUrl).toMatch(/^mailto:/);
+  test('lists the six work entries in the agreed order in both languages', () => {
+    const workIds = ['fastabiqu', 'institution', 'store', 'calendar', 'quote-vault', 'figures'];
+
+    expect(landing.en.work.map((work) => work.id)).toEqual(workIds);
+    expect(landing.ar.work.map((work) => work.id)).toEqual(workIds);
   });
 
-  test('maps navigation to unique page sections', () => {
-    const hrefs = SITE.navigation.map((item) => item.href);
+  test('gives English and Arabic the same number of entries in every list', () => {
+    expect(landing.en.nav).toHaveLength(6);
+    expect(landing.en.services).toHaveLength(4);
+    expect(landing.en.results).toHaveLength(6);
+    expect(landing.en.work).toHaveLength(6);
+    expect(landing.en.steps).toHaveLength(5);
+    expect(landing.en.journey).toHaveLength(6);
 
-    expect(hrefs).toEqual(['#work', '#services', '#process', '#about', '#sharing', '#contact']);
-    expect(new Set(hrefs).size).toBe(hrefs.length);
+    for (const list of ['nav', 'services', 'results', 'work', 'steps', 'journey'] as const) {
+      expect(landing.ar[list]).toHaveLength(landing.en[list].length);
+    }
+    expect(landing.ar.nav.map((entry) => entry.id)).toEqual(landing.en.nav.map((entry) => entry.id));
+    expect(landing.ar.services.map((entry) => entry.id)).toEqual(landing.en.services.map((entry) => entry.id));
+    expect(landing.ar.work.map((entry) => entry.id)).toEqual(landing.en.work.map((entry) => entry.id));
   });
 
-  test('describes a clear service and delivery model', () => {
-    expect(SITE.services).toHaveLength(3);
-    expect(SITE.process.map((step) => step.name)).toEqual([
-      'Understand',
-      'Shape',
-      'Build',
-      'Refine and ship',
-    ]);
-    expect(SITE.audiences).toHaveLength(2);
-  });
+  test('builds the WhatsApp link with each language message', () => {
+    for (const locale of LOCALES) {
+      const url = new URL(whatsappUrl(locale));
 
-  test('features the intended products in the intended order', () => {
-    const featured = products.filter((product) => product.featured);
-
-    expect(featured.map((product) => product.id)).toEqual([
-      'arkan',
-      'nabd',
-      'quran-api',
-      'quote-vault',
-    ]);
-    for (const product of featured) {
-      /* a live URL is optional, but a broken one is not: every href that exists must be
-         absolute, and every card always has a source link to fall back on. */
-      if (product.href !== null) expect(product.href).toMatch(/^https:\/\//);
-      expect(product.repo).toMatch(/^https:\/\//);
-      expect(JSON.stringify(product)).not.toMatch(placeholderPattern);
+      expect(url.host).toBe('wa.me');
+      expect(url.pathname).toBe(`/${WHATSAPP_NUMBER}`);
+      expect(url.searchParams.get('text')).toBe(WHATSAPP_MESSAGE[locale]);
     }
   });
 
-  test('publishes the expected social links', () => {
-    expect(socials.map(({ id, url }) => ({ id, url }))).toEqual([
-      { id: 'linkedin', url: 'https://www.linkedin.com/in/ebrahimyoussef391/' },
-      { id: 'qabilah', url: 'https://qabilah.com/profile/ibrahim-youssef' },
-      { id: 'facebook', url: 'https://www.facebook.com/61586254296785' },
-      { id: 'youtube', url: 'https://www.youtube.com/@ebrahimyoussef391' },
-      { id: 'github', url: 'https://github.com/ebrahim-youssef' },
-    ]);
-    for (const social of socials) expect(social.url).toMatch(/^https:\/\//);
-    expect(socials.find((social) => social.id === 'linkedin')?.arabic).toBe(true);
-    expect(socials.find((social) => social.id === 'qabilah')?.arabic).toBe(true);
+  test('keeps every content link either https or a site path starting with a slash', () => {
+    for (const locale of LOCALES) {
+      for (const href of contentLinks(locale)) expect(href).toMatch(/^(?:https:\/\/|\/)/);
+    }
+    for (const social of SOCIAL_LINKS) expect(social.url).toMatch(/^https:\/\//);
   });
 
-  test('resolves social links by id', () => {
-    expect(socialUrl('github')).toBe('https://github.com/ebrahim-youssef');
-    expect(() => socialUrl('nope')).toThrow();
+  test('offers the Cal.com booking only when a URL is configured', () => {
+    expect(CAL_URL === '' || CAL_URL.startsWith('https://')).toBe(true);
   });
 
-  test('contains no placeholder marketing copy', () => {
-    const copy = JSON.stringify({ site: SITE, products, socials });
-
-    expect(copy).not.toMatch(placeholderPattern);
+  test('shows only LinkedIn, GitHub and YouTube on the landing page', () => {
+    expect(LANDING_SOCIAL_IDS).toEqual(['linkedin', 'github', 'youtube']);
   });
 
-  test('publishes no product outside the intended set', () => {
-    expect(products.map((product) => product.id)).toEqual([
-      'arkan',
-      'nabd',
-      'quran-api',
-      'quote-vault',
-      'figures-game',
-    ]);
-  });
-
-  /* Serialized data misses copy written straight into a component, which is where the
-     old framing and the em dashes were actually hiding. */
-  test('keeps banned copy out of every source file', () => {
-    const offenders = sourceFiles(sourceRoot)
-      .filter((path) => placeholderPattern.test(withoutComments(readFileSync(path, 'utf8'))))
-      .map((path) => path.slice(sourceRoot.length));
+  test('names no town anywhere in the source', () => {
+    const townPattern = /Tukh|طوخ|Qalyubia|القليوبية/i;
+    const offenders = sourceSnapshot.filter(({ source }) => townPattern.test(source)).map(({ path }) => path.slice(sourceRoot.length));
 
     expect(offenders).toEqual([]);
+  });
+
+  test('links no TikTok anywhere in the source', () => {
+    const offenders = sourceSnapshot.filter(({ source }) => /tiktok/i.test(source)).map(({ path }) => path.slice(sourceRoot.length));
+
+    expect(offenders).toEqual([]);
+  });
+
+  test('keeps banned copy out of every source file', () => {
+    const offenders = sourceSnapshot.filter(({ source }) => bannedCopyPattern.test(source)).map(({ path }) => path.slice(sourceRoot.length));
+
+    expect(offenders).toEqual([]);
+  });
+
+  test('rejects em and en dashes but accepts a plain hyphen-minus', () => {
+    expect('a — b').toMatch(bannedCopyPattern);
+    expect('a – b').toMatch(bannedCopyPattern);
+    expect('full-stack').not.toMatch(bannedCopyPattern);
   });
 });

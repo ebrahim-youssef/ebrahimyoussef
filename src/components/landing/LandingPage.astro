@@ -1,0 +1,41 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Footer from '../Footer.astro';
+import SiteHeader from '../SiteHeader.astro';
+import AboutChapter from './AboutChapter.astro';
+import ContactChapter from './ContactChapter.astro';
+import HeroChapter from './HeroChapter.astro';
+import MethodChapter from './MethodChapter.astro';
+import ResultsChapter from './ResultsChapter.astro';
+import ServicesChapter from './ServicesChapter.astro';
+import WorkChapter from './WorkChapter.astro';
+import { landing } from '../../data/landing';
+import type { Locale } from '../../data/locale';
+import '../../styles/landing.css';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const content = landing[locale];
+---
+
+<BaseLayout locale={locale} path="/" title={content.title} description={content.sub}>
+  <SiteHeader locale={locale} />
+  <main id="main" class="chapters">
+    <HeroChapter locale={locale} />
+    <ServicesChapter locale={locale} />
+    <ResultsChapter locale={locale} />
+    <WorkChapter locale={locale} />
+    <MethodChapter locale={locale} />
+    <AboutChapter locale={locale} />
+    <ContactChapter locale={locale} />
+  </main>
+  <Footer locale={locale} />
+</BaseLayout>
+
+<script>
+  import '../../scripts/landing';
+  import '../../scripts/contactForm';
+</script>

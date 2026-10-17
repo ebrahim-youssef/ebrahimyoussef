@@ -17,7 +17,5 @@ for (const [file, size] of [
   ['/tmp/fav-32.png', 32],
 ]) await sharp(Buffer.from(icon), { density: 300 }).resize(size, size).png().toFile(file);
 await writeFile('public/favicon.ico', await pngToIco(['/tmp/fav-32.png']));
-const ogTemplate = await readFile('assets/brand/og-template.svg', 'utf8');
-const og = ogTemplate.replace('<!-- MARK -->', lightMarkContent);
-await sharp(Buffer.from(og), { density: 150 }).resize(1200, 630).png().toFile('public/og.png');
-console.log('icons + og done');
+// public/og.png comes from scripts/og/og.html, printed by hand.
+console.log('icons done');

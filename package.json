@@ -1,7 +1,7 @@
 {
   "name": "ebrahimyoussef",
   "type": "module",
-  "version": "0.0.2",
+  "version": "1.0.0",
   "engines": {
     "node": ">=22.12.0"
   },
@@ -18,9 +18,9 @@
   "dependencies": {
     "@astrojs/react": "^6.0.2",
     "@astrojs/sitemap": "^3.7.3",
-    "@fontsource-variable/figtree": "^5.3.0",
-    "@fontsource-variable/rubik": "^5.3.0",
-    "@fontsource/caprasimo": "^5.3.0",
+    "@fontsource-variable/readex-pro": "5.3.0",
+    "@fontsource-variable/reem-kufi": "5.3.0",
+    "@fontsource/aref-ruqaa": "5.3.0",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
     "astro": "^7.1.6",

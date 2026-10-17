@@ -1,0 +1,29 @@
+---
+import { landing } from '../../data/landing';
+import { type Locale } from '../../data/locale';
+
+interface Props {
+  locale: Locale;
+}
+
+const SERVICES_GHOST: Record<Locale, string> = { en: 'خدماتي', ar: 'خدماتي' };
+const { locale } = Astro.props;
+const content = landing[locale];
+---
+
+<section class="chapter c-cream" id="services" aria-labelledby="services-title">
+  <div class="ghost" aria-hidden="true" lang="ar">{SERVICES_GHOST[locale]}</div>
+  <div class="inner">
+    <h2 id="services-title">{content.servicesTitle}</h2>
+    <div class="services">
+      {content.services.map((service) => (
+        <article>
+          {'ar' in service && <span class="ar" lang="ar">{service.ar}</span>}
+          <h3>{service.title}</h3>
+          <p>{service.text}</p>
+          <small>{content.proofLabel} {service.proof}</small>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>

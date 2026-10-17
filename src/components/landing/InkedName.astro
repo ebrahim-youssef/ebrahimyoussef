@@ -1,0 +1,14 @@
+---
+import { landing } from '../../data/landing';
+import type { Locale } from '../../data/locale';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+---
+
+<svg class="name" viewBox="0 0 760 240" role="img" aria-label={landing[locale].nameLabel}>
+  <text x="740" y="180" direction="rtl" lang="ar">إبراهيم يوسف</text>
+</svg>
