@@ -40,6 +40,7 @@ interface LandingContent {
   formTitle: string;
   fields: LandingFields;
   fieldErrors: LandingFields;
+  contactPlaceholder: string;
   send: string;
   sending: string;
   sent: string;
@@ -120,7 +121,8 @@ export const landing = {
     bookCall: 'Book a call',
     formTitle: 'Or tell me here',
     fields: { name: 'Your name', contact: 'Email or WhatsApp number', message: 'What do you want to build?' },
-    fieldErrors: { name: 'Add your name.', contact: 'Enter your email, or a WhatsApp number with the country code, like +20 100 123 4567.', message: 'Tell me a little about what you want to build.' },
+    contactPlaceholder: 'you@email.com or 010 1234 5678',
+    fieldErrors: { name: 'Add your name.', contact: 'Enter your email or WhatsApp number. Outside Egypt, add the country code, like +971.', message: 'Tell me a little about what you want to build.' },
     send: 'Send message',
     sending: 'Sending…',
     sent: 'Thanks, your message is on its way to my inbox.',
@@ -199,7 +201,8 @@ export const landing = {
     bookCall: 'احجز مكالمة',
     formTitle: 'أو اكتب لي هنا',
     fields: { name: 'اسمك', contact: 'بريدك أو رقم واتساب', message: 'ماذا تريد أن تبني؟' },
-    fieldErrors: { name: 'اكتب اسمك.', contact: 'اكتب بريدك، أو رقم واتساب مع كود الدولة، مثل ‎+20 100 123 4567.', message: 'أخبرني قليلًا عمّا تريد بناءه.' },
+    contactPlaceholder: 'you@email.com أو 010 1234 5678',
+    fieldErrors: { name: 'اكتب اسمك.', contact: 'اكتب بريدك أو رقم واتساب. من خارج مصر، أضف كود الدولة، مثل ‎+971.', message: 'أخبرني قليلًا عمّا تريد بناءه.' },
     send: 'أرسل الرسالة',
     sending: 'جارٍ الإرسال…',
     sent: 'شكرًا، رسالتك في طريقها إلى بريدي.',

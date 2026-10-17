@@ -67,7 +67,7 @@ const socialLinks = LANDING_SOCIAL_IDS.map((id) => SOCIAL_LINKS.find((link) => l
         </div>
         <div class="field">
           <label for="f-contact">{content.fields.contact}</label>
-          <input id="f-contact" name="contact" required maxlength="200" autocomplete="email" aria-describedby="e-contact" />
+          <input id="f-contact" name="contact" required maxlength="200" autocomplete="email" placeholder={content.contactPlaceholder} aria-describedby="e-contact" />
           <span class="error" id="e-contact"></span>
         </div>
         <div class="field">
