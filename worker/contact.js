@@ -2,7 +2,6 @@
 
 const MAX_BODY_BYTES = 8192;
 const TURNSTILE_URL = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
-const EMAIL_TO = 'me@ebrahimyoussef.com';
 const EMAIL_FROM = 'website@ebrahimyoussef.com';
 const EMAIL_SUBJECT = 'New message from ebrahimyoussef.com';
 /** @type {Record<string, string>} */
@@ -17,7 +16,7 @@ const CONTACT_FIELD_LIMITS = [
 /**
  * @typedef {{ send: any }} ContactEmailBinding
  * @typedef {{ limit: any }} ContactLimiter
- * @typedef {{ CONTACT_EMAIL: ContactEmailBinding, CONTACT_LIMITER: ContactLimiter, TURNSTILE_SECRET_KEY: string, TURNSTILE_HOSTNAME: string }} ContactEnvironment
+ * @typedef {{ CONTACT_EMAIL: ContactEmailBinding, CONTACT_LIMITER: ContactLimiter, TURNSTILE_SECRET_KEY: string, TURNSTILE_HOSTNAME: string, CONTACT_TO: string }} ContactEnvironment
  * @typedef {{ name?: unknown, contact?: unknown, message?: unknown, website?: unknown, token?: unknown }} ContactPayload
  * @typedef {{ to: string, from: string, subject: string, text: string, html: string, replyTo?: string }} ContactEmailMessage
  */
@@ -166,7 +165,7 @@ export async function handleContact(request, env) {
   const html = `<p><strong>Name:</strong> ${escapeHtml(name)}</p><p><strong>Contact:</strong> ${escapeHtml(contact)}</p><p><strong>Message:</strong> ${escapeHtml(message)}</p>`;
   /** @type {ContactEmailMessage} */
   const email = {
-    to: EMAIL_TO,
+    to: env.CONTACT_TO,
     from: EMAIL_FROM,
     subject: EMAIL_SUBJECT,
     text,
@@ -178,7 +177,8 @@ export async function handleContact(request, env) {
     await env.CONTACT_EMAIL.send(email);
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
-    console.error('Contact email send failed:', errorMessage);
+    const errorCode = /** @type {{ code?: unknown }} */ (error)?.code;
+    console.error('Contact email send failed:', errorCode, errorMessage);
     return jsonResponse({ ok: false }, 502);
   }
 

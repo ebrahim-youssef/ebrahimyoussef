@@ -15,6 +15,7 @@ type FakeEnvironment = {
   CONTACT_LIMITER: { limit: ReturnType<typeof vi.fn> };
   TURNSTILE_SECRET_KEY: string;
   TURNSTILE_HOSTNAME: string;
+  CONTACT_TO: string;
 };
 
 type StreamRequestInit = RequestInit & { duplex: 'half' };
@@ -25,6 +26,7 @@ function makeEnvironment(success = true): FakeEnvironment {
     CONTACT_LIMITER: { limit: vi.fn().mockResolvedValue({ success }) },
     TURNSTILE_SECRET_KEY: 'turnstile-secret',
     TURNSTILE_HOSTNAME: 'ebrahimyoussef.com',
+    CONTACT_TO: 'owner@example.com',
   };
 }
 
@@ -314,7 +316,7 @@ describe('contact handler', () => {
     expect(environment.CONTACT_EMAIL.send).toHaveBeenCalledOnce();
     expect(environment.CONTACT_EMAIL.send).toHaveBeenCalledWith(
       expect.objectContaining({
-        to: 'me@ebrahimyoussef.com',
+        to: 'owner@example.com',
         from: 'website@ebrahimyoussef.com',
         subject: 'New message from ebrahimyoussef.com',
       }),

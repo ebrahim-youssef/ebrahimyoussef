@@ -24,8 +24,8 @@ const socialLinks = LANDING_SOCIAL_IDS.map((id) => SOCIAL_LINKS.find((link) => l
       <div>
         <h2 id="contact-title">{content.contactTitle}</h2>
         <div class="ctas">
-          <a class="button" href={whatsappUrl(locale)}>{content.waButton}</a>
-          {CAL_URL && <a class="button ghost-button" href={CAL_URL}>{content.bookCall}</a>}
+          <a class="button" href={whatsappUrl(locale)} target="_blank" rel="noopener noreferrer">{content.waButton}</a>
+          {CAL_URL && <a class="button ghost-button" href={CAL_URL} target="_blank" rel="noopener noreferrer">{content.bookCall}</a>}
         </div>
         <div class="route-email">
           <small>{content.orEmail}</small>
@@ -41,7 +41,7 @@ const socialLinks = LANDING_SOCIAL_IDS.map((id) => SOCIAL_LINKS.find((link) => l
         </div>
         <ul class="social">
           {socialLinks.map((link) => (
-            <li><a href={link.url}>{SOCIAL_LABEL[locale][link.id]}<Arrow /></a></li>
+            <li><a href={link.url} target="_blank" rel="noopener noreferrer">{SOCIAL_LABEL[locale][link.id]}<Arrow /></a></li>
           ))}
         </ul>
       </div>

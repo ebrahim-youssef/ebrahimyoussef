@@ -43,7 +43,11 @@ function localizedLink(href: string): string {
           {work.links && (
             <div class="links">
               {work.links.map((link) => (
-                <a href={localizedLink(link.href)}>
+                <a
+                  href={localizedLink(link.href)}
+                  target={link.href.startsWith('https://') ? '_blank' : undefined}
+                  rel={link.href.startsWith('https://') ? 'noopener noreferrer' : undefined}
+                >
                   {link.label}
                   {link.href.startsWith('https://') && <Arrow />}
                 </a>
