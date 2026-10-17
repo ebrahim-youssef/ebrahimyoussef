@@ -20,7 +20,7 @@ const { before, emphasis, after } = splitEmphasis(content.h1);
       <h1>{before}<em>{emphasis}</em>{after}</h1>
       <p>{content.sub}</p>
       <div class="ctas">
-        <a class="button" href={whatsappUrl(locale)}>{content.waButton}</a>
+        <a class="button" href={whatsappUrl(locale)} target="_blank" rel="noopener noreferrer">{content.waButton}</a>
         <a class="text-link" href="#work">{content.seeWork}</a>
       </div>
     </div>

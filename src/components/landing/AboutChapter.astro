@@ -21,8 +21,8 @@ const linkedinUrl = SOCIAL_LINKS.find((link) => link.id === 'linkedin')?.url;
       <h2 id="about-title">{content.aboutTitle}</h2>
       <p>{content.about}</p>
       <div class="links">
-        <a class="button" href={content.cv.href}>{content.cv.label}</a>
-        {linkedinUrl && <a href={linkedinUrl}>LinkedIn<Arrow /></a>}
+        <a class="button" href={content.cv.href} target="_blank" rel="noopener noreferrer">{content.cv.label}</a>
+        {linkedinUrl && <a href={linkedinUrl} target="_blank" rel="noopener noreferrer">LinkedIn<Arrow /></a>}
       </div>
     </div>
     <ol class="timeline">
