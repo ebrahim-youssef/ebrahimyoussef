@@ -3,3 +3,7 @@ packages:
 
 allowBuilds:
   esbuild: true
+
+# strnum 2.5.x was under 14 days old when fast-xml-parser was added (2026-10-18).
+overrides:
+  strnum: 2.4.2
