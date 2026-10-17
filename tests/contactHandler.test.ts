@@ -232,6 +232,17 @@ describe('contact handler', () => {
     expect(await responseBody(response)).toMatchObject({ ok: false, field });
   });
 
+  test('rejects a gibberish contact before Turnstile and sending', async () => {
+    const environment = makeEnvironment();
+    const fetchMock = vi.mocked(globalThis.fetch);
+    const response = await handleContact(makeRequest({ ...validBody, contact: 'hello' }), environment);
+
+    expect(response.status).toBe(400);
+    expect(await responseBody(response)).toMatchObject({ ok: false, field: 'contact' });
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(environment.CONTACT_EMAIL.send).not.toHaveBeenCalled();
+  });
+
   test.each([
     ['name', 'x'.repeat(101)],
     ['contact', 'x'.repeat(201)],
@@ -307,7 +318,7 @@ describe('contact handler', () => {
     expect(response.status).toBe(502);
   });
 
-  test('sends a valid message with the fixed sender and subject', async () => {
+  test('sends a valid message with the fixed sender object', async () => {
     const environment = makeEnvironment();
     const response = await handleContact(makeRequest(), environment);
 
@@ -317,10 +328,14 @@ describe('contact handler', () => {
     expect(environment.CONTACT_EMAIL.send).toHaveBeenCalledWith(
       expect.objectContaining({
         to: 'owner@example.com',
-        from: 'website@ebrahimyoussef.com',
-        subject: 'New message from ebrahimyoussef.com',
+        from: { email: 'website@ebrahimyoussef.com', name: expect.any(String) },
+        subject: expect.any(String),
+        html: expect.any(String),
       }),
     );
+    const email = environment.CONTACT_EMAIL.send.mock.calls[0][0];
+    expect(email.subject).not.toBe('');
+    expect(email.html).not.toBe('');
   });
 
   test('sets Reply-To for a valid email address', async () => {
@@ -330,18 +345,23 @@ describe('contact handler', () => {
     expect(environment.CONTACT_EMAIL.send).toHaveBeenCalledWith(expect.objectContaining({ replyTo: 'visitor@example.com' }));
   });
 
-  test('omits Reply-To for a phone number', async () => {
+  test('sends a WhatsApp number without Reply-To', async () => {
     const environment = makeEnvironment();
-    await handleContact(makeRequest({ ...validBody, contact: '+201012345678' }), environment);
+    const response = await handleContact(makeRequest({ ...validBody, contact: '+20 100 123 4567' }), environment);
 
+    expect(response.status).toBe(200);
+    expect(environment.CONTACT_EMAIL.send).toHaveBeenCalledOnce();
     expect(environment.CONTACT_EMAIL.send.mock.calls[0][0]).not.toHaveProperty('replyTo');
   });
 
-  test('omits Reply-To for an address containing a header injection', async () => {
+  test('rejects an address containing a header injection', async () => {
     const environment = makeEnvironment();
-    await handleContact(makeRequest({ ...validBody, contact: 'a@b.com\r\nBcc: x@y.com' }), environment);
+    const fetchMock = vi.mocked(globalThis.fetch);
+    const response = await handleContact(makeRequest({ ...validBody, contact: 'a@b.com\r\nBcc: x@y.com' }), environment);
 
-    expect(environment.CONTACT_EMAIL.send.mock.calls[0][0]).not.toHaveProperty('replyTo');
+    expect(response.status).toBe(400);
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(environment.CONTACT_EMAIL.send).not.toHaveBeenCalled();
   });
 
   test('HTML-escapes visitor values in the sent message', async () => {

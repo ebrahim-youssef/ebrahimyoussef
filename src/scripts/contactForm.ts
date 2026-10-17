@@ -1,3 +1,5 @@
+import { classifyContact } from '../../worker/contactValidation.js';
+
 type ContactField = 'name' | 'contact' | 'message';
 type ContactOutcome = 'sent' | 'field' | 'failed';
 type ContactResponse = { ok?: boolean; field?: ContactField };
@@ -17,10 +19,12 @@ export function validateContactForm(form: HTMLFormElement): boolean {
   for (const name of CONTACT_FIELDS) {
     const input = form.elements.namedItem(name) as HTMLInputElement | HTMLTextAreaElement;
     const isEmpty = !input.value.trim();
-    input.setAttribute('aria-invalid', String(isEmpty));
+    const isInvalidContact = name === 'contact' && classifyContact(input.value.trim()) === null;
+    const isInvalid = isEmpty || isInvalidContact;
+    input.setAttribute('aria-invalid', String(isInvalid));
     const error = form.querySelector(`#e-${name}`);
-    if (error) error.textContent = isEmpty ? fieldError(form, name) : '';
-    if (isEmpty && isValid) {
+    if (error) error.textContent = isInvalid ? fieldError(form, name) : '';
+    if (isInvalid && isValid) {
       input.focus();
       isValid = false;
     }
