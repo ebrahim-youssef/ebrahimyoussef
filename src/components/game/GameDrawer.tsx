@@ -1,9 +1,17 @@
 import { lazy, Suspense, useRef, useState } from 'react';
+import { daftar } from '../../data/daftar';
+import type { Locale } from '../../data/locale';
+import { gameStrings } from './strings';
 import './game.css';
 
 const Game = lazy(() => import('./Game'));
 
-export default function GameDrawer() {
+interface GameDrawerProps {
+  locale: Locale;
+}
+
+export default function GameDrawer({ locale }: GameDrawerProps) {
+  const strings = gameStrings[locale];
   const ref = useRef<HTMLDialogElement>(null);
   const [opened, setOpened] = useState(false);
 
@@ -14,28 +22,30 @@ export default function GameDrawer() {
 
   return (
     <>
-      <button type="button" className="btn btn-primary game-launch" onClick={open}>
-        Play the game ✦
+      <button type="button" className="button game-launch" onClick={open}>
+        {daftar[locale].walls.play.start}
       </button>
       <dialog
         ref={ref}
         className="game-drawer"
-        aria-label="Islamic figures game"
+        aria-label={strings.dialogLabel}
+        dir={locale === 'ar' ? 'rtl' : 'ltr'}
+        lang={locale}
         onClick={(e) => {
           if (e.target === ref.current) ref.current?.close();
         }}
       >
         <button
           type="button"
-          className="btn btn-ghost btn-icon drawer-close"
+          className="game-button game-button-ghost drawer-close"
           onClick={() => ref.current?.close()}
-          aria-label="Close game"
+          aria-label={strings.closeLabel}
         >
           ×
         </button>
         {opened && (
-          <Suspense fallback={<p className="drawer-loading">Loading…</p>}>
-            <Game />
+          <Suspense fallback={<p className="drawer-loading">{strings.loading}</p>}>
+            <Game locale={locale} />
           </Suspense>
         )}
       </dialog>

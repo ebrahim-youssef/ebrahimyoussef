@@ -1,4 +1,6 @@
 import markSvg from '../../../assets/brand/monogram.svg?raw';
+import type { Locale } from '../../data/locale';
+import { formatGameString, gameStrings } from './strings';
 
 export interface ShareData {
   score: number;
@@ -18,13 +20,13 @@ const SITE_URL = 'ebrahimyoussef.com';
 const CARD_SIZE = 1080;
 
 /** Short line shown on-screen (EndScreen headline) and drawn on the share card itself. */
-export function headlineText({ score, total, seconds }: ShareData): string {
-  return `I named ${score} of ${total} figures in ${seconds}s`;
+export function headlineText({ score, total, seconds }: ShareData, locale: Locale = 'en'): string {
+  return formatGameString(gameStrings[locale].endHeadline, { score, total, seconds });
 }
 
 /** Longer line used for the native share sheet / clipboard fallback. */
-export function shareMessage({ score, total, seconds }: ShareData): string {
-  return `I named ${score} of ${total} Islamic figures in ${seconds}s. Play at ${SITE_URL}`;
+export function shareMessage({ score, total, seconds }: ShareData, locale: Locale = 'en'): string {
+  return formatGameString(gameStrings[locale].shareMessage.replace('ebrahimyoussef.com', SITE_URL), { score, total, seconds });
 }
 
 interface TextClipboard {
@@ -103,7 +105,7 @@ function wrapLines(ctx: CanvasRenderingContext2D, text: string, maxWidth: number
  * Draws the 1080×1080 share card and resolves to a PNG blob (or null if canvas
  * is unavailable — this is browser-only, called from EndScreen's Share button).
  */
-export async function drawShareCard(data: ShareData): Promise<Blob | null> {
+export async function drawShareCard(data: ShareData, locale: Locale = 'en'): Promise<Blob | null> {
   if (typeof document === 'undefined') return null;
   const canvas = document.createElement('canvas');
   canvas.width = CARD_SIZE;
@@ -135,7 +137,7 @@ export async function drawShareCard(data: ShareData): Promise<Blob | null> {
 
   ctx.fillStyle = COLORS.ink;
   ctx.font = "600 44px 'Figtree Variable', 'Rubik Variable', system-ui, sans-serif";
-  const lines = wrapLines(ctx, headlineText(data), CARD_SIZE - 220);
+  const lines = wrapLines(ctx, headlineText(data, locale), CARD_SIZE - 220);
   const lineHeight = 58;
   const startY = 580;
   lines.forEach((line, i) => ctx.fillText(line, CARD_SIZE / 2, startY + i * lineHeight));

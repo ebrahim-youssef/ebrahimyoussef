@@ -10,6 +10,7 @@ import { landing } from '../../data/landing';
 import { localizedPath } from '../../data/siteMeta';
 import { SOCIAL_LABEL, SOCIAL_LINKS } from '../../data/social';
 import { fetchLatestVideos } from '../../lib/youtubeFeed';
+import GameDrawer from '../game/GameDrawer';
 import '../../styles/daftar.css';
 
 interface Props {
@@ -105,10 +106,10 @@ const motionLabel = locale === 'ar' ? 'دفتر، بخط الرقعة' : 'Daftar
                   </ul>
                 )}
                 {wallId === 'play' && (
-                  <div class="clip game reveal">
+                  <div class="clip game-clip reveal">
                     <span class="ar" lang="ar">من هو؟</span>
                     <p>{content.walls.play.text}</p>
-                    <div id="play-slot"></div>
+                    <GameDrawer client:visible locale={locale} />
                   </div>
                 )}
                 {wallId === 'write' && (

@@ -50,10 +50,9 @@ svg.word text { font: 700 330px var(--ruqaa); fill: transparent; stroke: var(--b
 .videos span { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; font-size: 13.5px; line-height: 1.6; margin-block-start: 8px; min-height: 3.2em; }
 .videos time { display: block; font-size: 11.5px; color: var(--muted); margin-block-start: 4px; font-variant-numeric: tabular-nums; }
 
-.game { --r: 1.4deg; max-width: 480px; }
-.game .ar { font: 700 44px/1.3 var(--ruqaa); color: var(--brand-rust); display: block; }
-.game p { margin: 6px 0 18px; color: var(--muted); font-size: 16px; }
-#play-slot { min-height: 1px; }
+.game-clip { --r: 1.4deg; max-width: 480px; }
+.game-clip > .ar { font: 700 44px/1.3 var(--ruqaa); color: var(--brand-rust); display: block; }
+.game-clip > p { margin: 6px 0 18px; color: var(--muted); font-size: 16px; }
 .note { --r: -1.6deg; max-width: 420px; background: #fdf3c4; }
 .note b { display: block; font: 700 30px/1.25 var(--body); letter-spacing: -.02em; color: var(--ink); }
 :lang(ar) .note b { font: 700 38px/1.35 var(--ruqaa); letter-spacing: 0; }

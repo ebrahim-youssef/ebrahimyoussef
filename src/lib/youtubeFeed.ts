@@ -2,6 +2,8 @@ import { XMLParser } from 'fast-xml-parser';
 
 export const YOUTUBE_CHANNEL_ID = 'UCcKyBs8u4-ZEkJC-Z7FdVUQ';
 export const YOUTUBE_FEED_URL = `https://www.youtube.com/feeds/videos.xml?channel_id=${YOUTUBE_CHANNEL_ID}`;
+export const MAX_FETCH_ATTEMPTS = 3;
+export const RETRY_DELAY_MS = 2000;
 
 export type YouTubeVideo = {
   id: string;
@@ -18,6 +20,10 @@ const parser = new XMLParser({
   ignoreAttributes: false,
   attributeNamePrefix: '@_',
 });
+
+type Wait = (milliseconds: number) => Promise<void>;
+
+const wait: Wait = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds));
 
 function asRecord(value: unknown): XmlRecord | undefined {
   if (typeof value !== 'object' || value === null || Array.isArray(value)) return undefined;
@@ -102,22 +108,35 @@ export function parseYouTubeFeed(xml: string): YouTubeVideo[] {
 export async function fetchLatestVideos(
   limit = 6,
   fetchImpl: typeof fetch = fetch,
+  waitImpl: Wait = wait,
 ): Promise<YouTubeVideo[]> {
-  try {
-    const response = await fetchImpl(YOUTUBE_FEED_URL, {
-      signal: AbortSignal.timeout(5000),
-    });
+  let lastFailure: unknown;
 
-    if (response.status !== 200) {
-      console.warn(`YouTube feed request returned HTTP ${response.status}`);
-      return [];
+  for (let attempt = 1; attempt <= MAX_FETCH_ATTEMPTS; attempt += 1) {
+    try {
+      const response = await fetchImpl(YOUTUBE_FEED_URL, {
+        signal: AbortSignal.timeout(5000),
+      });
+
+      if (response.status !== 200) {
+        lastFailure = new Error(`HTTP ${response.status}`);
+      } else {
+        const xml = await response.text();
+        return parseYouTubeFeed(xml).slice(0, Math.max(0, limit));
+      }
+    } catch (error) {
+      lastFailure = error;
     }
 
-    const xml = await response.text();
-    return parseYouTubeFeed(xml).slice(0, Math.max(0, limit));
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    console.warn(`YouTube feed request failed: ${message}`);
-    return [];
+    if (attempt < MAX_FETCH_ATTEMPTS) await waitImpl(RETRY_DELAY_MS);
   }
+
+  if (lastFailure instanceof Error && lastFailure.message.startsWith('HTTP ')) {
+    console.warn(`YouTube feed request returned ${lastFailure.message}`);
+  } else {
+    const message = lastFailure instanceof Error ? lastFailure.message : String(lastFailure);
+    console.warn(`YouTube feed request failed: ${message}`);
+  }
+
+  return [];
 }
