@@ -1,7 +1,7 @@
 {
   "name": "ebrahimyoussef",
   "type": "module",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "engines": {
     "node": ">=22.12.0"
   },
@@ -23,22 +23,24 @@
     "@fontsource/aref-ruqaa": "5.3.0",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
-    "astro": "^7.1.6",
+    "astro": "^7.3.5",
     "fast-xml-parser": "5.11.2",
     "react": "^19.2.8",
     "react-dom": "^19.2.8"
   },
   "pnpm": {
     "overrides": {
-      "strnum": "2.4.2"
+      "strnum": "2.4.2",
+      "sharp@<0.35.5": "0.35.5"
     }
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
     "png-to-ico": "^3.0.2",
-    "sharp": "^0.35.3",
+    "sharp": "^0.35.5",
     "typescript": "^6.0.3",
-    "vitest": "^4.1.10",
-    "wrangler": "^4.123.0"
+    "vite": "8.3.2",
+    "vitest": "^4.1.11",
+    "wrangler": "^4.147.0"
   }
 }
