@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, test } from 'vitest';
-import { checkForbidden, checkPage, checkPdf, localizedPath as buildLocalizedPath, SITE_URL as buildSiteUrl } from '../scripts/buildChecks.mjs';
+import { checkForbidden, checkPage, checkPdf, localizedPath as buildLocalizedPath, PUBLIC_PAGE_PATHS, SITE_URL as buildSiteUrl } from '../scripts/buildChecks.mjs';
 import { localizedPath, SITE_URL } from '../src/data/siteMeta';
 
 const validPage = `<!doctype html>
@@ -22,9 +22,28 @@ function pageWith(replacement: string, replacementValue: string) {
   return validPage.replace(replacement, replacementValue);
 }
 
+function validPageFor(locale: 'en' | 'ar', path: string) {
+  const englishUrl = `${buildSiteUrl}${buildLocalizedPath('en', path)}`;
+  const arabicUrl = `${buildSiteUrl}${buildLocalizedPath('ar', path)}`;
+  return validPage
+    .replace('<html lang="en" dir="ltr">', `<html lang="${locale}" dir="${locale === 'ar' ? 'rtl' : 'ltr'}">`)
+    .replace('<link rel="canonical" href="https://ebrahimyoussef.com/">', `<link rel="canonical" href="${locale === 'ar' ? arabicUrl : englishUrl}">`)
+    .replace('<link rel="alternate" hreflang="en" href="https://ebrahimyoussef.com/">', `<link rel="alternate" hreflang="en" href="${englishUrl}">`)
+    .replace('<link rel="alternate" hreflang="ar" href="https://ebrahimyoussef.com/ar/">', `<link rel="alternate" hreflang="ar" href="${arabicUrl}">`)
+    .replace('<link rel="alternate" hreflang="x-default" href="https://ebrahimyoussef.com/">', `<link rel="alternate" hreflang="x-default" href="${englishUrl}">`)
+    .replace('content="https://ebrahimyoussef.com/">', `content="${locale === 'ar' ? arabicUrl : englishUrl}">`);
+}
+
 describe('checkPage', () => {
   test('accepts a page with the complete English document contract', () => {
     expect(checkPage(validPage, { locale: 'en', path: '/' })).toEqual([]);
+  });
+
+  test.each(PUBLIC_PAGE_PATHS.flatMap((path) => [
+    ['English', 'en' as const, path],
+    ['Arabic', 'ar' as const, path],
+  ]))('accepts the complete %s %s document contract', (_name, locale, path) => {
+    expect(checkPage(validPageFor(locale, path), { locale, path })).toEqual([]);
   });
 
   test.each([
@@ -159,7 +178,7 @@ describe('checkPdf', () => {
 describe('duplicated build constants', () => {
   test('keeps the build constants aligned with siteMeta', () => {
     expect(buildSiteUrl).toBe(SITE_URL);
-    for (const path of ['/', '/fastabiqu/']) {
+    for (const path of ['/', '/fastabiqu/', '/daftar/']) {
       expect(buildLocalizedPath('en', path)).toBe(localizedPath('en', path));
       expect(buildLocalizedPath('ar', path)).toBe(localizedPath('ar', path));
     }

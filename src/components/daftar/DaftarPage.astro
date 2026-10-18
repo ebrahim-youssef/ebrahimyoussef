@@ -1,0 +1,156 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Arrow from '../landing/Arrow.astro';
+import Monogram from '../Monogram.astro';
+import { whatsappUrl } from '../../data/contact';
+import { daftar } from '../../data/daftar';
+import { type Locale } from '../../data/locale';
+import { getNow } from '../../data/now';
+import { landing } from '../../data/landing';
+import { localizedPath } from '../../data/siteMeta';
+import { SOCIAL_LABEL, SOCIAL_LINKS } from '../../data/social';
+import { fetchLatestVideos } from '../../lib/youtubeFeed';
+import '../../styles/daftar.css';
+
+interface Props {
+  locale: Locale;
+}
+
+const PATH = '/daftar/';
+const { locale } = Astro.props;
+const content = daftar[locale];
+const shared = landing[locale];
+const otherLocale: Locale = locale === 'en' ? 'ar' : 'en';
+const now = await getNow(locale);
+const videos = await fetchLatestVideos(6);
+const shortCount = videos.filter((video) => video.isShort).length;
+console.info(`Daftar watch wall fetched ${videos.length} videos (${shortCount} Shorts)`);
+
+const nowFormatter = new Intl.DateTimeFormat(locale === 'ar' ? 'ar-EG' : 'en-GB', {
+  month: 'long',
+  year: 'numeric',
+});
+const videoDateFormatter = new Intl.DateTimeFormat(locale === 'ar' ? 'ar-EG' : 'en-GB', {
+  day: 'numeric',
+  month: 'short',
+});
+const nowMonth = `${now.date.getUTCFullYear()}-${String(now.date.getUTCMonth() + 1).padStart(2, '0')}`;
+const youtube = SOCIAL_LINKS.find((link) => link.id === 'youtube');
+const socialIds = ['linkedin', 'github', 'youtube', 'qabilah', 'facebook'] as const;
+const wallIds = videos.length > 0 ? (['watch', 'play', 'write'] as const) : (['play', 'write'] as const);
+const wallMeta = {
+  watch: { color: 'ink', paint: 'أصنع' },
+  play: { color: 'gold', paint: 'العب' },
+  write: { color: 'sage', paint: 'أكتب' },
+} as const;
+const motionLabel = locale === 'ar' ? 'دفتر، بخط الرقعة' : 'Daftar, written in Arabic';
+---
+
+<BaseLayout locale={locale} path={PATH} title={content.title} description={content.sub}>
+  <header class="topbar">
+    <a class="mark" href={localizedPath(locale, '/')} aria-label={landing[locale].title}>
+      <Monogram size={40} />
+      <span>{locale === 'ar' ? 'إبراهيم يوسف' : 'Ebrahim Youssef'}</span>
+    </a>
+    <nav aria-label={content.back}>
+      <a href={localizedPath(locale, '/')}>{content.back}</a>
+      <a class="lang" href={localizedPath(otherLocale, PATH)} lang={otherLocale} hreflang={otherLocale}>{shared.switchLabel}</a>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section class="hero" aria-labelledby="daftar-title">
+      <div>
+        <h1 id="daftar-title">{content.h1}</h1>
+        <p>{content.sub}</p>
+        <a class="button" href={`${localizedPath(locale, '/')}#contact`}>{content.workWithMe}</a>
+      </div>
+      <div class="ink-word">
+        <svg class="word" viewBox="0 0 600 360" role="img" aria-label={motionLabel}>
+          <text x="580" y="270" direction="rtl" lang="ar">دفتر</text>
+        </svg>
+        <article class="clip now reveal" aria-labelledby="now-title">
+          <span class="stamp"><time datetime={nowMonth}>{nowFormatter.format(now.date)}</time></span>
+          <b id="now-title">{content.nowLabel}</b>
+          <p>{now.text}</p>
+        </article>
+      </div>
+    </section>
+
+    <div class="swipe" aria-hidden="true"><span>{content.swipeHint}</span><span class="bar"><i id="swipe-bar"></i></span></div>
+    <div class="film" id="film">
+      <div class="sticky">
+        <div class="track" id="track">
+          {wallIds.map((wallId) => (
+            <section class:list={['wall', `w-${wallMeta[wallId].color}`]} id={wallId} aria-labelledby={`${wallId}-title`}>
+              <span class="paint" lang="ar" aria-hidden="true">{wallMeta[wallId].paint}</span>
+              <div class="label">
+                <h2 id={`${wallId}-title`}>{content.walls[wallId].title}</h2>
+                {wallId === 'watch' && <p>{content.walls.watch.text}</p>}
+                {wallId === 'write' && <p>{content.walls.write.label}</p>}
+                {wallId === 'watch' && youtube && <a href={youtube.url} target="_blank" rel="noopener noreferrer">{content.walls.watch.more}<Arrow /></a>}
+              </div>
+              <div class="board">
+                {wallId === 'watch' && (
+                  <ul class="videos">
+                    {videos.map((video, index) => (
+                      <li class:list={[video.isShort && 'is-short']} style={`--r:${['-1.6deg', '1.2deg', '-.6deg', '1.8deg', '-1.2deg', '.8deg'][index]}`}>
+                        <a href={video.url} target="_blank" rel="noopener noreferrer">
+                          <img src={video.thumbnailUrl} loading="lazy" alt="" width="480" height="360" />
+                          <span dir="auto">{video.title}</span>
+                          <time datetime={video.publishedAt.toISOString()}>{videoDateFormatter.format(video.publishedAt)}</time>
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                {wallId === 'play' && (
+                  <div class="clip game reveal">
+                    <span class="ar" lang="ar">من هو؟</span>
+                    <p>{content.walls.play.text}</p>
+                    <div id="play-slot"></div>
+                  </div>
+                )}
+                {wallId === 'write' && (
+                  <div class="clip note reveal"><b>{content.walls.write.soon}</b><p>{content.walls.write.text}</p></div>
+                )}
+              </div>
+            </section>
+          ))}
+        </div>
+      </div>
+      <nav class="rail" id="rail" aria-label={content.railLabel}>
+        <span class="dot" id="dot"></span>
+        {wallIds.map((wallId, index) => (
+          <button type="button" data-wall={index} style={`inset-inline-start:${(index / (wallIds.length - 1)) * 100}%`}>{content.walls[wallId].title}</button>
+        ))}
+      </nav>
+    </div>
+
+    <section class="elsewhere" aria-labelledby="elsewhere-title">
+      <h2 id="elsewhere-title">{content.elsewhereTitle}</h2>
+      <ul class="tags">
+        {socialIds.map((id) => {
+          const social = SOCIAL_LINKS.find((link) => link.id === id);
+          if (!social) return null;
+          return <li class="reveal"><a href={social.url} target="_blank" rel="noopener noreferrer">{SOCIAL_LABEL[locale][id]}{social.postsInArabic && locale === 'en' && <small>{content.inArabic}</small>}</a></li>;
+        })}
+      </ul>
+    </section>
+
+    <section class="cta" aria-labelledby="cta-title">
+      <div class="big" aria-hidden="true" lang="ar">تواصل</div>
+      <div class="elsewhere">
+        <h2 id="cta-title">{content.ctaTitle}</h2>
+        <div class="row">
+          <a class="button" href={whatsappUrl(locale)} target="_blank" rel="noopener noreferrer">{shared.waButton}</a>
+          <a href={localizedPath(locale, '/')}>{content.ctaLink}<Arrow /></a>
+        </div>
+      </div>
+    </section>
+  </main>
+</BaseLayout>
+
+<script>
+  import '../../scripts/daftar';
+</script>

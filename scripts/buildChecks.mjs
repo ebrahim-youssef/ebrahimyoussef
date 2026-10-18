@@ -1,4 +1,5 @@
 export const SITE_URL = 'https://ebrahimyoussef.com';
+export const PUBLIC_PAGE_PATHS = ['/', '/daftar/'];
 
 export function localizedPath(locale, path) {
   if (locale === 'en') return path;

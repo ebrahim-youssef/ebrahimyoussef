@@ -29,6 +29,10 @@ const content = landing[locale];
     ))}
   </nav>
   <div class="side">
+    <a class="daftar" href={localizedPath(locale, '/daftar/')}>
+      {content.daftarLink}
+      {content.daftarSmall && <span>{content.daftarSmall}</span>}
+    </a>
     <a
       class="lang"
       href={localizedPath(otherLocale, path)}

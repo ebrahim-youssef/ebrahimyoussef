@@ -1,7 +1,7 @@
 import { access, readdir, readFile } from 'node:fs/promises';
 import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { checkForbidden, checkPage, checkPdf } from './buildChecks.mjs';
+import { checkForbidden, checkPage, checkPdf, localizedPath, PUBLIC_PAGE_PATHS } from './buildChecks.mjs';
 
 const projectRoot = fileURLToPath(new URL('..', import.meta.url));
 const distRoot = join(projectRoot, 'dist');
@@ -50,10 +50,10 @@ async function readPage(relativePath, locale, path) {
 const requiredFiles = ['dist/robots.txt', 'dist/og.png', 'dist/favicon.svg', 'dist/sitemap-index.xml'];
 for (const relativePath of requiredFiles) await readText(relativePath);
 
-const pages = [
-  ['dist/index.html', 'en', '/'],
-  ['dist/ar/index.html', 'ar', '/'],
-];
+const pages = PUBLIC_PAGE_PATHS.flatMap((path) => [
+  [`dist${localizedPath('en', path)}index.html`, 'en', path],
+  [`dist${localizedPath('ar', path)}index.html`, 'ar', path],
+]);
 const hasFastabiquSource = await exists(join(projectRoot, 'src/pages/fastabiqu.astro')) || await exists(join(projectRoot, 'src/pages/fastabiqu'));
 if (hasFastabiquSource) {
   pages.push(['dist/fastabiqu/index.html', 'en', '/fastabiqu/']);
