@@ -27,6 +27,7 @@ export interface DaftarContent {
   inArabic: string;
   ctaTitle: string;
   ctaLink: string;
+  shareFallback: string;
 }
 
 export const daftar = {
@@ -48,6 +49,7 @@ export const daftar = {
     inArabic: 'in Arabic',
     ctaTitle: 'Want to build something together?',
     ctaLink: 'See what I do',
+    shareFallback: 'Select and copy the link',
   },
   ar: {
     title: 'دفتر إبراهيم يوسف',
@@ -67,5 +69,6 @@ export const daftar = {
     inArabic: 'بالعربية',
     ctaTitle: 'تريد أن نبني شيئًا معًا؟',
     ctaLink: 'شاهد ما أعمل',
+    shareFallback: 'حدّد الرابط وانسخه',
   },
 } satisfies Record<Locale, DaftarContent>;

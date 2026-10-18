@@ -3,6 +3,7 @@ import { render, type CollectionEntry } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Monogram from '../Monogram.astro';
 import { landing } from '../../data/landing';
+import { daftar } from '../../data/daftar';
 import type { Locale } from '../../data/locale';
 import { localizedPath, SITE_URL } from '../../data/siteMeta';
 import { firstParagraph, postSlug, slugify, tagPath } from '../../lib/posts';
@@ -30,8 +31,8 @@ const dateFormatter = new Intl.DateTimeFormat(locale === 'ar' ? 'ar-EG' : 'en-GB
   year: 'numeric',
 });
 const copy = locale === 'ar'
-  ? { back: 'العودة إلى الدفتر', language: 'العربية', share: 'مشاركة', copied: 'نُسخ الرابط', fallback: 'حدّد الرابط وانسخه', translation: 'اقرأ الترجمة', daftar: 'دفتري' }
-  : { back: 'Back to the daftar', language: 'English', share: 'Share', copied: 'Link copied', fallback: 'Select and copy the link', translation: 'Read the translation', daftar: 'My notebook' };
+  ? { back: 'العودة إلى الدفتر', language: 'العربية', share: 'مشاركة', copied: 'نُسخ الرابط', fallback: daftar.ar.shareFallback, translation: 'اقرأ الترجمة', daftar: 'دفتري' }
+  : { back: 'Back to the daftar', language: 'English', share: 'Share', copied: 'Link copied', fallback: daftar.en.shareFallback, translation: 'Read the translation', daftar: 'My notebook' };
 const structuredData = [
   {
     '@type': ['Article', 'BlogPosting'],
@@ -84,13 +85,18 @@ const structuredData = [
       </header>
       <div class="post-actions">
         {translation && <a class="button ghost-button" href={localizedPath(otherLocale, translationPath ?? path)}>{copy.translation}</a>}
-        <a
-          class="button"
-          href={currentUrl}
-          data-share-link
-          data-copied={copy.copied}
-          data-copy-fallback={copy.fallback}
-        >{copy.share}</a>
+        <div class="share-control">
+          <a
+            class="button"
+            href={currentUrl}
+            data-share-link
+            data-copied={copy.copied}
+          >{copy.share}</a>
+          <div class="share-fallback" data-share-fallback hidden>
+            <label for="post-share-url">{copy.fallback}</label>
+            <input id="post-share-url" type="text" value={currentUrl} readonly dir="ltr" autocomplete="off" />
+          </div>
+        </div>
       </div>
       <div class="post-prose"><Content /></div>
     </article>

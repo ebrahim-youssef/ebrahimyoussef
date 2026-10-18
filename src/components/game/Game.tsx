@@ -94,10 +94,10 @@ export default function Game({ locale }: GameProps) {
           <div className="game-round">
             <p className="game-progress">{formatGameString(strings.progress, { round: state.roundIx + 1, total: state.ids.length, score: state.score })}</p>
             {state.phase === 'question' && state.mode === 'tap' && (
-              <TapMode key={current.id} target={current} options={options} onAnswer={handleAnswer} strings={strings} />
+              <TapMode key={current.id} target={current} options={options} onAnswer={handleAnswer} strings={strings} locale={locale} />
             )}
             {state.phase === 'question' && state.mode === 'write' && (
-              <WriteMode key={current.id} target={current} onAnswer={handleAnswer} strings={strings} />
+              <WriteMode key={current.id} target={current} onAnswer={handleAnswer} strings={strings} locale={locale} />
             )}
             {state.phase === 'reveal' && (
               <FigureCard

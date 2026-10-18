@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { Figure } from '../../data/figures';
+import type { Locale } from '../../data/locale';
 import { matchesAnswer } from './arabic';
 import type { GameStrings } from './strings';
 
@@ -7,9 +8,10 @@ interface WriteModeProps {
   target: Figure;
   onAnswer: (correct: boolean) => void;
   strings: GameStrings;
+  locale: Locale;
 }
 
-export default function WriteMode({ target, onAnswer, strings }: WriteModeProps) {
+export default function WriteMode({ target, onAnswer, strings, locale }: WriteModeProps) {
   const [value, setValue] = useState('');
 
   function giveUp() {
@@ -18,7 +20,9 @@ export default function WriteMode({ target, onAnswer, strings }: WriteModeProps)
 
   return (
     <div className="write-mode">
-      <p className="game-hint">{target.hintEn}</p>
+      <p className="game-hint" lang={locale} dir={locale === 'ar' ? 'rtl' : 'ltr'}>
+        {locale === 'ar' ? target.hintAr : target.hintEn}
+      </p>
       <form
         className="write-form"
         onSubmit={(e) => {
