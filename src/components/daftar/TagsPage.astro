@@ -10,12 +10,14 @@ import '../../styles/daftar.css';
 interface Props { locale: Locale; tags: string[]; }
 
 const { locale, tags } = Astro.props;
+const PATH = '/daftar/tags/';
+const otherLocale = locale === 'en' ? 'ar' : 'en';
 const copy = locale === 'ar'
   ? { back: 'العودة إلى الدفتر', title: 'كل الوسوم', empty: 'لا توجد وسوم بعد.', daftar: 'دفتري' }
   : { back: 'Back to the daftar', title: 'All tags', empty: 'No tags yet.', daftar: 'My notebook' };
 ---
 
-<BaseLayout locale={locale} path="/daftar/tags/" alternatePath={null} title={copy.title} description={copy.title}>
+<BaseLayout locale={locale} path={PATH} alternatePath={PATH} title={copy.title} description={copy.title}>
   <header class="topbar">
     <a class="mark" href={localizedPath(locale, '/')} aria-label={landing[locale].title}>
       <Monogram size={40} />
@@ -23,7 +25,7 @@ const copy = locale === 'ar'
     </a>
     <nav aria-label={copy.daftar}>
       <a href={localizedPath(locale, '/daftar/')}>{copy.back}</a>
-      <a class="lang" href={localizedPath(locale === 'en' ? 'ar' : 'en', '/daftar/')}>{locale === 'ar' ? 'English' : 'العربية'}</a>
+      <a class="lang" href={localizedPath(otherLocale, PATH)} lang={otherLocale} hreflang={otherLocale}>{locale === 'ar' ? 'English' : 'العربية'}</a>
     </nav>
   </header>
 

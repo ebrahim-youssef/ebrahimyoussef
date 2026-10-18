@@ -1,5 +1,5 @@
 export const SITE_URL = 'https://ebrahimyoussef.com';
-export const PUBLIC_PAGE_PATHS = ['/', '/daftar/'];
+export const PUBLIC_PAGE_PATHS = ['/', '/daftar/', '/daftar/tags/'];
 
 import { XMLParser } from 'fast-xml-parser';
 
@@ -25,6 +25,22 @@ function hasMeta(metaTags, attributeName, value) {
     const attributeValue = attribute(tag, attributeName);
     return attributeValue?.toLowerCase() === value.toLowerCase() && Boolean(attribute(tag, 'content')?.trim());
   });
+}
+
+function hasSitemapLocation(sitemap, url) {
+  const escapedUrl = url.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return new RegExp(`<loc>\\s*${escapedUrl}\\s*</loc>`, 'i').test(sitemap);
+}
+
+export function checkLanguageSwitch(html, { locale, path }) {
+  const otherLocale = locale === 'en' ? 'ar' : 'en';
+  const expectedPath = localizedPath(otherLocale, path);
+  const languageLinks = tags(html, 'a').filter((tag) => attribute(tag, 'class')?.split(/\s+/).includes('lang'));
+
+  if (languageLinks.length !== 1 || attribute(languageLinks[0], 'href') !== expectedPath) {
+    return [`${localizedPath(locale, path)}: language switch must link to ${expectedPath}`];
+  }
+  return [];
 }
 
 export function checkFeedAlternateLink(html, { locale }) {
@@ -66,6 +82,30 @@ export function checkRss(xml, { language, path }) {
     problems.push(`${path}: RSS must contain an atom self link`);
   }
   return problems;
+}
+
+export function checkSitemap(indexXml, sitemapDocuments, { path = 'dist/sitemap-index.xml' } = {}) {
+  const referencedUrls = new Set(sitemapReferences(indexXml));
+  const sitemap = sitemapDocuments
+    .filter(({ url }) => referencedUrls.has(url))
+    .map(({ xml }) => xml)
+    .join('\n');
+  const problems = [];
+
+  if (!hasSitemapLocation(sitemap, `${SITE_URL}/`)) problems.push(`${path}: sitemap must list the English root URL`);
+  if (!hasSitemapLocation(sitemap, `${SITE_URL}/ar/`)) problems.push(`${path}: sitemap must list the Arabic root URL`);
+  return problems;
+}
+
+export function sitemapReferences(indexXml) {
+  try {
+    const parsed = new XMLParser({ ignoreAttributes: false }).parse(indexXml);
+    const entries = parsed?.sitemapindex?.sitemap;
+    const sitemaps = Array.isArray(entries) ? entries : entries ? [entries] : [];
+    return sitemaps.map((sitemap) => sitemap?.loc).filter((url) => typeof url === 'string' && url.trim()).map((url) => url.trim());
+  } catch {
+    return [];
+  }
 }
 
 export function checkPage(html, { locale, path }) {

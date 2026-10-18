@@ -1,7 +1,7 @@
 import { access, readdir, readFile } from 'node:fs/promises';
 import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { checkFeedAlternateLink, checkForbidden, checkPage, checkPdf, checkRss, localizedPath, PUBLIC_PAGE_PATHS } from './buildChecks.mjs';
+import { checkFeedAlternateLink, checkForbidden, checkLanguageSwitch, checkPage, checkPdf, checkRss, checkSitemap, localizedPath, PUBLIC_PAGE_PATHS, SITE_URL, sitemapReferences } from './buildChecks.mjs';
 
 const projectRoot = fileURLToPath(new URL('..', import.meta.url));
 const distRoot = join(projectRoot, 'dist');
@@ -45,6 +45,7 @@ async function readPage(relativePath, locale, path) {
     pageHtml.push(html);
     problems.push(...checkPage(html, { locale, path }));
     if (path === '/daftar/') problems.push(...checkFeedAlternateLink(html, { locale }));
+    if (path === '/daftar/tags/') problems.push(...checkLanguageSwitch(html, { locale, path }));
   }
 }
 
@@ -79,11 +80,38 @@ for (const file of clientScriptFiles) {
   problems.push(...checkForbidden(text, relative(projectRoot, file)));
 }
 
-const sitemapFiles = await filesIn(distRoot, '.xml');
-const sitemap = (await Promise.all(sitemapFiles.map((file) => readFile(file, 'utf8')))).join('\n');
-if (sitemapFiles.length > 0) {
-  if (!sitemap.includes('https://ebrahimyoussef.com/')) problems.push('dist/sitemap-index.xml: sitemap must list the English root URL');
-  if (!sitemap.includes('https://ebrahimyoussef.com/ar/')) problems.push('dist/sitemap-index.xml: sitemap must list the Arabic root URL');
+const sitemapIndex = await readText('dist/sitemap-index.xml');
+if (sitemapIndex !== null) {
+  const sitemapDocuments = [];
+  for (const url of sitemapReferences(sitemapIndex)) {
+    let parsedUrl;
+    try {
+      parsedUrl = new URL(url);
+    } catch {
+      problems.push(`dist/sitemap-index.xml: sitemap reference is not a valid URL: ${url}`);
+      continue;
+    }
+
+    if (parsedUrl.origin !== SITE_URL) {
+      problems.push(`dist/sitemap-index.xml: sitemap reference must use ${SITE_URL}: ${url}`);
+      continue;
+    }
+
+    const relativePath = parsedUrl.pathname.replace(/^\/+/, '');
+    const sitemapPath = join(distRoot, relativePath);
+    const withinDist = relative(distRoot, sitemapPath);
+    if (withinDist.startsWith('..') || withinDist.includes(':')) {
+      problems.push(`dist/sitemap-index.xml: sitemap reference must point inside dist: ${url}`);
+      continue;
+    }
+
+    try {
+      sitemapDocuments.push({ url, xml: await readFile(sitemapPath, 'utf8') });
+    } catch {
+      problems.push(`dist/${relativePath}: sitemap file is referenced but missing or unreadable`);
+    }
+  }
+  problems.push(...checkSitemap(sitemapIndex, sitemapDocuments));
 }
 
 if (await exists(join(projectRoot, 'public/cv.pdf'))) {

@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, test } from 'vitest';
-import { checkFeedAlternateLink, checkForbidden, checkPage, checkPdf, checkRss, localizedPath as buildLocalizedPath, PUBLIC_PAGE_PATHS, SITE_URL as buildSiteUrl } from '../scripts/buildChecks.mjs';
+import { checkFeedAlternateLink, checkForbidden, checkLanguageSwitch, checkPage, checkPdf, checkRss, checkSitemap, localizedPath as buildLocalizedPath, PUBLIC_PAGE_PATHS, SITE_URL as buildSiteUrl } from '../scripts/buildChecks.mjs';
 import { localizedPath, SITE_URL } from '../src/data/siteMeta';
 
 const validPage = `<!doctype html>
@@ -183,6 +183,37 @@ describe('RSS build checks', () => {
   });
 });
 
+describe('language switch build checks', () => {
+  test.each([
+    ['en', '/ar/daftar/tags/'],
+    ['ar', '/daftar/tags/'],
+  ] as const)('accepts the %s tags index link to the other language', (locale, expectedHref) => {
+    expect(checkLanguageSwitch(`<a class="lang" href="${expectedHref}">Switch</a>`, { locale, path: '/daftar/tags/' })).toEqual([]);
+  });
+
+  test('rejects a tags index language link to the daftar home', () => {
+    expect(checkLanguageSwitch('<a class="lang" href="/ar/daftar/">Switch</a>', { locale: 'en', path: '/daftar/tags/' })).toContain(
+      '/daftar/tags/: language switch must link to /ar/daftar/tags/',
+    );
+  });
+});
+
+describe('sitemap build checks', () => {
+  test('does not count feed URLs when referenced sitemaps omit the root URLs', () => {
+    const sitemapIndex = `<sitemapindex><sitemap><loc>${buildSiteUrl}/sitemap-0.xml</loc></sitemap></sitemapindex>`;
+    const sitemap = '<urlset><url><loc>https://ebrahimyoussef.com/other-page/</loc></url></urlset>';
+    const feed = `<rss><channel><link>${buildSiteUrl}/</link><link>${buildSiteUrl}/ar/</link></channel></rss>`;
+
+    expect(checkSitemap(sitemapIndex, [
+      { url: `${buildSiteUrl}/sitemap-0.xml`, xml: sitemap },
+      { url: `${buildSiteUrl}/rss.xml`, xml: feed },
+    ])).toEqual([
+      'dist/sitemap-index.xml: sitemap must list the English root URL',
+      'dist/sitemap-index.xml: sitemap must list the Arabic root URL',
+    ]);
+  });
+});
+
 describe('checkPdf', () => {
   test('accepts a PDF with the required header and size', () => {
     const bytes = new Uint8Array(10 * 1024 + 1);
@@ -204,7 +235,7 @@ describe('checkPdf', () => {
 describe('duplicated build constants', () => {
   test('keeps the build constants aligned with siteMeta', () => {
     expect(buildSiteUrl).toBe(SITE_URL);
-    for (const path of ['/', '/fastabiqu/', '/daftar/']) {
+    for (const path of ['/', '/fastabiqu/', '/daftar/', '/daftar/tags/']) {
       expect(buildLocalizedPath('en', path)).toBe(localizedPath('en', path));
       expect(buildLocalizedPath('ar', path)).toBe(localizedPath('ar', path));
     }
