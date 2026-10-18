@@ -1,0 +1,21 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import TagPage from '../../../components/daftar/TagPage.astro';
+import { publishedPosts, slugify, tagsOf } from '../../../lib/posts';
+
+export async function getStaticPaths() {
+  const allEntries = await getCollection('posts');
+  const posts = publishedPosts(allEntries, 'en');
+  const otherTags = tagsOf(publishedPosts(allEntries, 'ar'));
+  return tagsOf(posts).map((tag) => ({
+    params: { tag },
+    props: {
+      tag,
+      posts: posts.filter((post) => post.data.tags.map(slugify).includes(tag)) as CollectionEntry<'posts'>[],
+      alternateTag: otherTags.includes(tag) ? tag : null,
+    },
+  }));
+}
+---
+
+<TagPage locale="en" {...Astro.props} />

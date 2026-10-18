@@ -8,29 +8,34 @@ import TapMode from './TapMode';
 import WriteMode from './WriteMode';
 import FigureCard from './FigureCard';
 import EndScreen from './EndScreen';
+import type { Locale } from '../../data/locale';
+import { formatGameString, gameStrings } from './strings';
 
-function ModeSelectScreen({ onSelect }: { onSelect: (mode: Mode) => void }) {
+function ModeSelectScreen({ onSelect, strings }: { onSelect: (mode: Mode) => void; strings: (typeof gameStrings)[Locale] }) {
   const { streak } = loadStreak();
   return (
     <div className="mode-select">
-      <h2 className="game-title">Name the figure</h2>
-      <p className="game-intro">
-        Seven rounds. Read the hint, then name the figure. Tap an answer, or write it in Arabic.
-      </p>
-      {streak >= 1 && <p className="streak-badge">🔥 {streak}-day streak</p>}
+      <h2 className="game-title">{strings.title}</h2>
+      <p className="game-intro">{strings.intro}</p>
+      {streak >= 1 && <p className="streak-badge">{formatGameString(strings.streak, { streak })}</p>}
       <div className="mode-buttons">
-        <button type="button" className="btn btn-primary mode-btn" onClick={() => onSelect('tap')}>
-          <span aria-hidden="true">👆</span> Tap the answer
+        <button type="button" className="game-button game-button-primary mode-btn" onClick={() => onSelect('tap')}>
+          {strings.tapAnswer}
         </button>
-        <button type="button" className="btn btn-secondary mode-btn" onClick={() => onSelect('write')}>
-          <span aria-hidden="true">✍️</span> Write it in Arabic
+        <button type="button" className="game-button game-button-secondary mode-btn" onClick={() => onSelect('write')}>
+          {strings.writeAnswer}
         </button>
       </div>
     </div>
   );
 }
 
-export default function Game() {
+interface GameProps {
+  locale: Locale;
+}
+
+export default function Game({ locale }: GameProps) {
+  const strings = gameStrings[locale];
   const [state, setState] = useState<GameState | null>(null);
   const [result, setResult] = useState<{ streak: number; best: number } | null>(null);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
@@ -81,20 +86,18 @@ export default function Game() {
   }
 
   return (
-    <div className="game">
+    <div className="game" dir={locale === 'ar' ? 'rtl' : 'ltr'} lang={locale}>
       <div className="game-body">
-        {!state && <ModeSelectScreen onSelect={startSession} />}
+        {!state && <ModeSelectScreen onSelect={startSession} strings={strings} />}
 
         {state && state.phase !== 'done' && current && (
           <div className="game-round">
-            <p className="game-progress">
-              Round {state.roundIx + 1} of {state.ids.length} · Score {state.score}
-            </p>
+            <p className="game-progress">{formatGameString(strings.progress, { round: state.roundIx + 1, total: state.ids.length, score: state.score })}</p>
             {state.phase === 'question' && state.mode === 'tap' && (
-              <TapMode key={current.id} target={current} options={options} onAnswer={handleAnswer} />
+              <TapMode key={current.id} target={current} options={options} onAnswer={handleAnswer} strings={strings} locale={locale} />
             )}
             {state.phase === 'question' && state.mode === 'write' && (
-              <WriteMode key={current.id} target={current} onAnswer={handleAnswer} />
+              <WriteMode key={current.id} target={current} onAnswer={handleAnswer} strings={strings} locale={locale} />
             )}
             {state.phase === 'reveal' && (
               <FigureCard
@@ -102,6 +105,7 @@ export default function Game() {
                 figure={current}
                 correct={state.lastCorrect}
                 onNext={handleNext}
+                strings={strings}
               />
             )}
           </div>
@@ -116,11 +120,13 @@ export default function Game() {
             best={result.best}
             onPlayAgain={() => startSession(state.mode)}
             onSwitchMode={handleSwitchMode}
+            locale={locale}
+            strings={strings}
           />
         )}
       </div>
       <footer className="game-footer">
-        <p className="proof-caption">A small experiment in Arabic input and game state.</p>
+        <p className="proof-caption">{strings.footer}</p>
       </footer>
     </div>
   );

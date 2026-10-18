@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, test } from 'vitest';
-import { checkForbidden, checkPage, checkPdf, localizedPath as buildLocalizedPath, SITE_URL as buildSiteUrl } from '../scripts/buildChecks.mjs';
+import { checkFeedAlternateLink, checkForbidden, checkLanguageSwitch, checkPage, checkPdf, checkRss, checkSitemap, localizedPath as buildLocalizedPath, PUBLIC_PAGE_PATHS, SITE_URL as buildSiteUrl } from '../scripts/buildChecks.mjs';
 import { localizedPath, SITE_URL } from '../src/data/siteMeta';
 
 const validPage = `<!doctype html>
@@ -22,9 +22,33 @@ function pageWith(replacement: string, replacementValue: string) {
   return validPage.replace(replacement, replacementValue);
 }
 
+function validPageFor(locale: 'en' | 'ar', path: string) {
+  const englishUrl = `${buildSiteUrl}${buildLocalizedPath('en', path)}`;
+  const arabicUrl = `${buildSiteUrl}${buildLocalizedPath('ar', path)}`;
+  return validPage
+    .replace('<html lang="en" dir="ltr">', `<html lang="${locale}" dir="${locale === 'ar' ? 'rtl' : 'ltr'}">`)
+    .replace('<link rel="canonical" href="https://ebrahimyoussef.com/">', `<link rel="canonical" href="${locale === 'ar' ? arabicUrl : englishUrl}">`)
+    .replace('<link rel="alternate" hreflang="en" href="https://ebrahimyoussef.com/">', `<link rel="alternate" hreflang="en" href="${englishUrl}">`)
+    .replace('<link rel="alternate" hreflang="ar" href="https://ebrahimyoussef.com/ar/">', `<link rel="alternate" hreflang="ar" href="${arabicUrl}">`)
+    .replace('<link rel="alternate" hreflang="x-default" href="https://ebrahimyoussef.com/">', `<link rel="alternate" hreflang="x-default" href="${englishUrl}">`)
+    .replace('content="https://ebrahimyoussef.com/">', `content="${locale === 'ar' ? arabicUrl : englishUrl}">`);
+}
+
 describe('checkPage', () => {
   test('accepts a page with the complete English document contract', () => {
     expect(checkPage(validPage, { locale: 'en', path: '/' })).toEqual([]);
+  });
+
+  test('does not count an RSS alternate link as hreflang metadata', () => {
+    const html = validPage.replace('</head>', '<link rel="alternate" type="application/rss+xml" href="https://ebrahimyoussef.com/rss.xml"></head>');
+    expect(checkPage(html, { locale: 'en', path: '/' })).toEqual([]);
+  });
+
+  test.each(PUBLIC_PAGE_PATHS.flatMap((path) => [
+    ['English', 'en' as const, path],
+    ['Arabic', 'ar' as const, path],
+  ]))('accepts the complete %s %s document contract', (_name, locale, path) => {
+    expect(checkPage(validPageFor(locale, path), { locale, path })).toEqual([]);
   });
 
   test.each([
@@ -138,6 +162,58 @@ describe('checkForbidden', () => {
   });
 });
 
+describe('RSS build checks', () => {
+  const feed = `<?xml version="1.0"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Writing</title><link>https://ebrahimyoussef.com/daftar/</link><description>Notes</description><language>en</language><atom:link href="https://ebrahimyoussef.com/rss.xml" rel="self" type="application/rss+xml" /></channel></rss>`;
+
+  test('accepts an English RSS 2.0 feed', () => {
+    expect(checkRss(feed, { language: 'en', path: 'dist/rss.xml' })).toEqual([]);
+  });
+
+  test('rejects a feed with the wrong language', () => {
+    expect(checkRss(feed, { language: 'ar', path: 'dist/ar/rss.xml' })).toContain('dist/ar/rss.xml: RSS language must be ar');
+  });
+
+  test('accepts the daftar feed alternate link for each locale', () => {
+    const html = '<link rel="alternate" type="application/rss+xml" href="https://ebrahimyoussef.com/rss.xml">';
+    expect(checkFeedAlternateLink(html, { locale: 'en' })).toEqual([]);
+  });
+
+  test('rejects a daftar page without the matching feed alternate link', () => {
+    expect(checkFeedAlternateLink('', { locale: 'ar' })).toEqual(['/ar/daftar/: RSS alternate link must equal https://ebrahimyoussef.com/ar/rss.xml']);
+  });
+});
+
+describe('language switch build checks', () => {
+  test.each([
+    ['en', '/ar/daftar/tags/'],
+    ['ar', '/daftar/tags/'],
+  ] as const)('accepts the %s tags index link to the other language', (locale, expectedHref) => {
+    expect(checkLanguageSwitch(`<a class="lang" href="${expectedHref}">Switch</a>`, { locale, path: '/daftar/tags/' })).toEqual([]);
+  });
+
+  test('rejects a tags index language link to the daftar home', () => {
+    expect(checkLanguageSwitch('<a class="lang" href="/ar/daftar/">Switch</a>', { locale: 'en', path: '/daftar/tags/' })).toContain(
+      '/daftar/tags/: language switch must link to /ar/daftar/tags/',
+    );
+  });
+});
+
+describe('sitemap build checks', () => {
+  test('does not count feed URLs when referenced sitemaps omit the root URLs', () => {
+    const sitemapIndex = `<sitemapindex><sitemap><loc>${buildSiteUrl}/sitemap-0.xml</loc></sitemap></sitemapindex>`;
+    const sitemap = '<urlset><url><loc>https://ebrahimyoussef.com/other-page/</loc></url></urlset>';
+    const feed = `<rss><channel><link>${buildSiteUrl}/</link><link>${buildSiteUrl}/ar/</link></channel></rss>`;
+
+    expect(checkSitemap(sitemapIndex, [
+      { url: `${buildSiteUrl}/sitemap-0.xml`, xml: sitemap },
+      { url: `${buildSiteUrl}/rss.xml`, xml: feed },
+    ])).toEqual([
+      'dist/sitemap-index.xml: sitemap must list the English root URL',
+      'dist/sitemap-index.xml: sitemap must list the Arabic root URL',
+    ]);
+  });
+});
+
 describe('checkPdf', () => {
   test('accepts a PDF with the required header and size', () => {
     const bytes = new Uint8Array(10 * 1024 + 1);
@@ -159,7 +235,7 @@ describe('checkPdf', () => {
 describe('duplicated build constants', () => {
   test('keeps the build constants aligned with siteMeta', () => {
     expect(buildSiteUrl).toBe(SITE_URL);
-    for (const path of ['/', '/fastabiqu/']) {
+    for (const path of ['/', '/fastabiqu/', '/daftar/', '/daftar/tags/']) {
       expect(buildLocalizedPath('en', path)).toBe(localizedPath('en', path));
       expect(buildLocalizedPath('ar', path)).toBe(localizedPath('ar', path));
     }

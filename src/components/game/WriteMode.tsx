@@ -1,13 +1,17 @@
 import { useState } from 'react';
 import type { Figure } from '../../data/figures';
+import type { Locale } from '../../data/locale';
 import { matchesAnswer } from './arabic';
+import type { GameStrings } from './strings';
 
 interface WriteModeProps {
   target: Figure;
   onAnswer: (correct: boolean) => void;
+  strings: GameStrings;
+  locale: Locale;
 }
 
-export default function WriteMode({ target, onAnswer }: WriteModeProps) {
+export default function WriteMode({ target, onAnswer, strings, locale }: WriteModeProps) {
   const [value, setValue] = useState('');
 
   function giveUp() {
@@ -16,7 +20,9 @@ export default function WriteMode({ target, onAnswer }: WriteModeProps) {
 
   return (
     <div className="write-mode">
-      <p className="game-hint">{target.hintEn}</p>
+      <p className="game-hint" lang={locale} dir={locale === 'ar' ? 'rtl' : 'ltr'}>
+        {locale === 'ar' ? target.hintAr : target.hintEn}
+      </p>
       <form
         className="write-form"
         onSubmit={(e) => {
@@ -25,7 +31,7 @@ export default function WriteMode({ target, onAnswer }: WriteModeProps) {
         }}
       >
         <label htmlFor="ar-answer" dir="rtl" lang="ar">
-          اكتب الاسم بالعربية
+          {strings.writeLabel}
         </label>
         <input
           id="ar-answer"
@@ -35,16 +41,16 @@ export default function WriteMode({ target, onAnswer }: WriteModeProps) {
           autoComplete="off"
           autoCapitalize="off"
           spellCheck={false}
-          placeholder="…اكتب هنا"
+          placeholder={strings.writePlaceholder}
           value={value}
           onChange={(e) => setValue(e.target.value)}
         />
         <div className="write-actions">
-          <button className="btn btn-primary" type="submit">
-            Check
+          <button className="game-button game-button-primary" type="submit">
+            {strings.check}
           </button>
-          <button type="button" className="btn btn-ghost" onClick={giveUp}>
-            Show me
+          <button type="button" className="game-button game-button-ghost" onClick={giveUp}>
+            {strings.showMe}
           </button>
         </div>
       </form>

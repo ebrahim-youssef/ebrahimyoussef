@@ -15,7 +15,8 @@ const content = landing[locale];
 
 function localizedLink(href: string): string {
   if (!href.startsWith('/') || href === '/cv.pdf') return href;
-  return localizedPath(locale, href);
+  const [path, hash] = href.split('#');
+  return `${localizedPath(locale, path)}${hash ? `#${hash}` : ''}`;
 }
 ---
 

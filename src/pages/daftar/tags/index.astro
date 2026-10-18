@@ -1,0 +1,9 @@
+---
+import TagsPage from '../../../components/daftar/TagsPage.astro';
+import { getCollection } from 'astro:content';
+import { publishedPosts, tagsOf } from '../../../lib/posts';
+
+const tags = tagsOf(publishedPosts(await getCollection('posts'), 'en'));
+---
+
+<TagsPage locale="en" tags={tags} />

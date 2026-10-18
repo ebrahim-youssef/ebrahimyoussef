@@ -1,6 +1,10 @@
+/* ---------- launch button ---------- */
+
+.game-launch {
+  margin-block-start: 1rem;
+}
+
 /* ---------- modal shell ---------- */
-/* Class and component names still say "drawer"; the presentation is a centred
-   modal, matching the design system's .dialog. */
 
 dialog.game-drawer {
   position: fixed;
@@ -26,8 +30,6 @@ dialog.game-drawer {
     display 0.3s allow-discrete;
 }
 
-/* display only under [open]: a bare `display: flex` would defeat the dialog's
-   own closed state and leave it on screen */
 dialog.game-drawer[open] {
   display: flex;
   flex-direction: column;
@@ -47,31 +49,54 @@ dialog.game-drawer::backdrop {
   background: color-mix(in srgb, var(--color-neutral-900) 50%, transparent);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  dialog.game-drawer,
-  dialog.game-drawer[open] {
-    transition: none;
-    opacity: 1;
-    scale: 1;
-  }
-  @starting-style {
-    dialog.game-drawer[open] {
-      opacity: 1;
-      scale: 1;
-    }
-  }
+.game-drawer .game-button {
+  border: 0;
+  border-radius: var(--radius-md);
+  padding: 0.75rem 1rem;
+  font: 600 0.95rem/1.2 var(--font-body);
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease,
+    transform 0.15s var(--ease-spring);
 }
 
-.drawer-close {
+.game-drawer .game-button-primary {
+  background: var(--color-accent);
+  color: var(--color-bg);
+}
+
+.game-drawer .game-button-secondary {
+  background: var(--color-accent-2-200);
+  color: var(--color-text);
+}
+
+.game-drawer .game-button-ghost {
+  background: transparent;
+  color: var(--color-text);
+  box-shadow: inset 0 0 0 1px var(--color-neutral-300);
+}
+
+.game-drawer .game-button:hover {
+  transform: translateY(-1px);
+}
+
+.game-drawer .game-button:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.game-drawer .drawer-close {
   position: absolute;
   top: 0.75rem;
   inset-inline-end: 0.75rem;
-  /* the glyph is the whole control, so it overrides .btn's 14px label size */
+  z-index: 1;
+  padding: 0.4rem 0.65rem;
   font-size: 1.5rem;
   line-height: 1;
 }
 
-.drawer-loading {
+.game-drawer .drawer-loading {
   padding: 4rem 1.5rem;
   text-align: center;
   color: var(--color-neutral-700);
@@ -79,22 +104,25 @@ dialog.game-drawer::backdrop {
 
 /* ---------- game shell ---------- */
 
-.game {
+.game-drawer .game {
   display: flex;
   flex-direction: column;
   flex: 1 1 auto;
   min-height: 0;
 }
-.game-body {
+
+.game-drawer .game-body {
   flex: 1 1 auto;
   overflow-y: auto;
   padding: 4rem 1.5rem 1.5rem;
 }
-.game-footer {
+
+.game-drawer .game-footer {
   padding: 0.75rem 1.5rem 1.25rem;
   border-top: 1px solid var(--color-accent-2-300);
 }
-.proof-caption {
+
+.game-drawer .proof-caption {
   margin: 0;
   font-size: 0.8rem;
   color: var(--color-neutral-700);
@@ -103,74 +131,81 @@ dialog.game-drawer::backdrop {
 
 /* ---------- mode select ---------- */
 
-.mode-select {
+.game-drawer .mode-select {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 1rem;
-  text-align: center;
   padding-block: 1rem;
+  text-align: center;
 }
-.game-title {
+
+.game-drawer .game-title {
   margin: 0;
   font-family: var(--font-heading);
   font-weight: var(--font-heading-weight);
   font-size: 1.5rem;
 }
-.game-intro {
+
+.game-drawer .game-intro {
+  max-width: 32ch;
   margin: 0;
   color: var(--color-neutral-700);
-  max-width: 32ch;
 }
-.streak-badge {
+
+.game-drawer .streak-badge {
   margin: 0;
-  font-weight: 600;
-  color: var(--color-accent-700);
-  background: var(--color-surface);
   padding: 0.35rem 0.85rem;
   border-radius: 999px;
+  background: var(--color-surface);
+  color: var(--color-accent-700);
+  font-weight: 600;
 }
-.mode-buttons {
+
+.game-drawer .mode-buttons {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
   width: 100%;
   margin-top: 0.5rem;
 }
-.mode-btn {
+
+.game-drawer .mode-btn {
   justify-content: center;
   width: 100%;
 }
 
 /* ---------- round header ---------- */
 
-.game-progress {
+.game-drawer .game-progress {
   margin: 0 0 1rem;
-  font-size: 0.85rem;
   color: var(--color-neutral-700);
-  text-transform: uppercase;
+  font-size: 0.85rem;
   letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
-.game-hint {
-  font-size: 1.05rem;
+
+.game-drawer .game-hint {
   margin: 0 0 1.5rem;
+  font-size: 1.05rem;
 }
 
 /* ---------- tap mode ---------- */
 
-.tap-options {
+.game-drawer .tap-options {
   display: grid;
   grid-template-columns: 1fr;
   gap: 0.75rem;
 }
-.tap-option {
+
+.game-drawer .tap-option {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 0.25rem;
   padding: 1rem;
-  border-radius: var(--radius-md);
   border: 2px solid var(--color-accent-2-300);
+  border-radius: var(--radius-md);
   background: var(--color-surface);
   color: var(--color-text);
   cursor: pointer;
@@ -180,161 +215,201 @@ dialog.game-drawer::backdrop {
     border-color 0.15s,
     background 0.15s;
 }
-.tap-option-ar {
+
+.game-drawer .tap-option-ar {
   font-size: 1.5rem;
   font-weight: 600;
 }
-.tap-option-en {
-  font-size: 0.85rem;
+
+.game-drawer .tap-option-en {
   color: var(--color-neutral-700);
+  font-size: 0.85rem;
 }
 
 /* ---------- write mode ---------- */
 
-.write-form {
+.game-drawer .write-form {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
 }
-.write-form label {
+
+.game-drawer .write-form label {
   font-weight: 600;
 }
-.write-input {
-  font-size: 16px;
+
+.game-drawer .write-input {
   padding: 0.75rem 1rem;
-  border-radius: var(--radius-md);
   border: 2px solid var(--color-accent-2-300);
+  border-radius: var(--radius-md);
   background: var(--color-surface);
   color: var(--color-text);
   font-family: var(--font-body);
+  font-size: 16px;
 }
-.write-input:focus-visible {
+
+.game-drawer .write-input:focus-visible {
   border-color: var(--color-accent-700);
 }
-.write-actions {
+
+.game-drawer .write-actions {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 1rem;
-  flex-wrap: wrap;
 }
+
 /* ---------- figure card (reveal) ---------- */
 
-.figure-card {
+.game-drawer .figure-card {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  border-radius: calc(var(--radius-lg) * 1.15);
   padding: 0.25rem;
+  border-radius: calc(var(--radius-lg) * 1.15);
 }
-.figure-card-status {
+
+.game-drawer .figure-card-status {
   margin: 0;
-  font-weight: 600;
   color: var(--color-neutral-700);
+  font-weight: 600;
 }
-.figure-card.is-correct .figure-card-status {
+
+.game-drawer .figure-card.is-correct .figure-card-status {
   color: var(--color-accent-700);
 }
-.figure-card-name {
+
+.game-drawer .figure-card-name {
   margin: 0;
-  font-family: var(--font-heading);
-  font-weight: var(--font-heading-weight);
-  font-size: 2rem;
   color: var(--color-accent-700);
+  font-family: var(--font-heading);
+  font-size: 2rem;
+  font-weight: var(--font-heading-weight);
 }
-.figure-card-honorific {
+
+.game-drawer .figure-card-honorific {
   font-size: 1.1rem;
   font-weight: 500;
 }
-.figure-card-name-en {
+
+.game-drawer .figure-card-name-en {
   margin: 0;
   color: var(--color-neutral-700);
   font-size: 1rem;
 }
-.figure-card-fact {
+
+.game-drawer .figure-card-fact,
+.game-drawer .figure-card-fact-ar {
   margin: 0;
 }
-.figure-card-fact-ar {
-  margin: 0;
+
+.game-drawer .figure-card-fact-ar {
   color: var(--color-neutral-700);
 }
-.figure-card-next {
+
+.game-drawer .figure-card-next {
   align-self: flex-start;
   margin-top: 0.5rem;
 }
 
-.figure-card.is-correct {
-  animation: card-flash 0.5s var(--ease-spring);
+.game-drawer .figure-card.is-correct {
+  animation: game-card-flash 0.5s var(--ease-spring);
 }
-.figure-card.is-incorrect {
-  animation: card-shake 0.4s var(--ease-spring);
+
+.game-drawer .figure-card.is-incorrect {
+  animation: game-card-shake 0.4s var(--ease-spring);
 }
-@keyframes card-flash {
+
+@keyframes game-card-flash {
   0% {
     background: var(--color-accent-2-300);
   }
+
   100% {
     background: transparent;
   }
 }
-@keyframes card-shake {
+
+@keyframes game-card-shake {
   0%,
   100% {
     transform: translateX(0);
   }
+
   25% {
     transform: translateX(-6px);
   }
+
   75% {
     transform: translateX(6px);
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .figure-card.is-correct,
-  .figure-card.is-incorrect {
-    animation: none;
   }
 }
 
 /* ---------- end screen ---------- */
 
-.end-screen {
+.game-drawer .end-screen {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 0.75rem;
   text-align: center;
 }
-.end-headline {
+
+.game-drawer .end-headline {
   margin: 0;
   font-family: var(--font-heading);
-  font-weight: var(--font-heading-weight);
   font-size: 1.5rem;
+  font-weight: var(--font-heading-weight);
 }
-.end-best {
+
+.game-drawer .end-best {
   margin: 0;
   color: var(--color-neutral-700);
 }
-.end-actions {
+
+.game-drawer .end-actions {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
   width: 100%;
   margin-top: 0.5rem;
 }
-.toast {
+
+.game-drawer .toast,
+.game-drawer .share-error {
   margin: 0.5rem 0 0;
-  font-size: 0.9rem;
   color: var(--color-accent-700);
-}
-.share-error {
-  margin: 0.5rem 0 0;
   font-size: 0.9rem;
+}
+
+.game-drawer .share-error {
   color: var(--color-neutral-700);
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .tap-option:hover {
+  .game-drawer .tap-option:hover {
     border-color: var(--color-accent-700);
     transform: translateY(-2px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  dialog.game-drawer,
+  dialog.game-drawer[open] {
+    transition: none;
+    opacity: 1;
+    scale: 1;
+  }
+
+  .game-drawer .figure-card.is-correct,
+  .game-drawer .figure-card.is-incorrect {
+    animation: none;
+  }
+
+  @starting-style {
+    dialog.game-drawer[open] {
+      opacity: 1;
+      scale: 1;
+    }
   }
 }

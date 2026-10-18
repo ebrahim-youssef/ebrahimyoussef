@@ -1,4 +1,7 @@
 export const SITE_URL = 'https://ebrahimyoussef.com';
+export const PUBLIC_PAGE_PATHS = ['/', '/daftar/', '/daftar/tags/'];
+
+import { XMLParser } from 'fast-xml-parser';
 
 export function localizedPath(locale, path) {
   if (locale === 'en') return path;
@@ -24,6 +27,87 @@ function hasMeta(metaTags, attributeName, value) {
   });
 }
 
+function hasSitemapLocation(sitemap, url) {
+  const escapedUrl = url.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return new RegExp(`<loc>\\s*${escapedUrl}\\s*</loc>`, 'i').test(sitemap);
+}
+
+export function checkLanguageSwitch(html, { locale, path }) {
+  const otherLocale = locale === 'en' ? 'ar' : 'en';
+  const expectedPath = localizedPath(otherLocale, path);
+  const languageLinks = tags(html, 'a').filter((tag) => attribute(tag, 'class')?.split(/\s+/).includes('lang'));
+
+  if (languageLinks.length !== 1 || attribute(languageLinks[0], 'href') !== expectedPath) {
+    return [`${localizedPath(locale, path)}: language switch must link to ${expectedPath}`];
+  }
+  return [];
+}
+
+export function checkFeedAlternateLink(html, { locale }) {
+  const expected = `${SITE_URL}${locale === 'en' ? '/rss.xml' : '/ar/rss.xml'}`;
+  const feedLinks = tags(html, 'link').filter((tag) => {
+    return attribute(tag, 'rel')?.toLowerCase() === 'alternate' && attribute(tag, 'type')?.toLowerCase() === 'application/rss+xml';
+  });
+
+  if (feedLinks.length !== 1 || attribute(feedLinks[0], 'href') !== expected) {
+    return [`${localizedPath(locale, '/daftar/')}: RSS alternate link must equal ${expected}`];
+  }
+  return [];
+}
+
+export function checkRss(xml, { language, path }) {
+  const problems = [];
+  let channel;
+
+  try {
+    const parsed = new XMLParser({ ignoreAttributes: false }).parse(xml);
+    if (parsed?.rss?.['@_version'] !== '2.0') problems.push(`${path}: RSS root must declare version 2.0`);
+    channel = parsed?.rss?.channel;
+  } catch {
+    problems.push(`${path}: RSS must be valid XML`);
+    return problems;
+  }
+
+  if (!channel || typeof channel !== 'object') {
+    problems.push(`${path}: RSS must contain a channel`);
+    return problems;
+  }
+  if (channel.language !== language) problems.push(`${path}: RSS language must be ${language}`);
+  if (typeof channel.title !== 'string' || !channel.title.trim()) problems.push(`${path}: RSS channel title is required`);
+  if (typeof channel.link !== 'string' || !channel.link.trim()) problems.push(`${path}: RSS channel link is required`);
+  if (typeof channel.description !== 'string' || !channel.description.trim()) problems.push(`${path}: RSS channel description is required`);
+
+  const selfLinks = Array.isArray(channel['atom:link']) ? channel['atom:link'] : [channel['atom:link']];
+  if (!selfLinks.some((link) => link?.['@_rel'] === 'self' && link?.['@_type'] === 'application/rss+xml' && typeof link?.['@_href'] === 'string')) {
+    problems.push(`${path}: RSS must contain an atom self link`);
+  }
+  return problems;
+}
+
+export function checkSitemap(indexXml, sitemapDocuments, { path = 'dist/sitemap-index.xml' } = {}) {
+  const referencedUrls = new Set(sitemapReferences(indexXml));
+  const sitemap = sitemapDocuments
+    .filter(({ url }) => referencedUrls.has(url))
+    .map(({ xml }) => xml)
+    .join('\n');
+  const problems = [];
+
+  if (!hasSitemapLocation(sitemap, `${SITE_URL}/`)) problems.push(`${path}: sitemap must list the English root URL`);
+  if (!hasSitemapLocation(sitemap, `${SITE_URL}/ar/`)) problems.push(`${path}: sitemap must list the Arabic root URL`);
+  return problems;
+}
+
+export function sitemapReferences(indexXml) {
+  try {
+    const parsed = new XMLParser({ ignoreAttributes: false }).parse(indexXml);
+    const entries = parsed?.sitemapindex?.sitemap;
+    const sitemaps = Array.isArray(entries) ? entries : entries ? [entries] : [];
+    return sitemaps.map((sitemap) => sitemap?.loc).filter((url) => typeof url === 'string' && url.trim()).map((url) => url.trim());
+  } catch {
+    return [];
+  }
+}
+
 export function checkPage(html, { locale, path }) {
   const problems = [];
   const expectedPath = localizedPath(locale, path);
@@ -46,7 +130,7 @@ export function checkPage(html, { locale, path }) {
     ar: `${SITE_URL}${localizedPath('ar', path)}`,
     'x-default': `${SITE_URL}${localizedPath('en', path)}`,
   };
-  const alternateLinks = tags(html, 'link').filter((tag) => attribute(tag, 'rel')?.toLowerCase() === 'alternate');
+  const alternateLinks = tags(html, 'link').filter((tag) => attribute(tag, 'rel')?.toLowerCase() === 'alternate' && attribute(tag, 'hreflang'));
   if (alternateLinks.length !== 3) {
     problems.push(report(path, 'there must be exactly three hreflang alternate links'));
   }

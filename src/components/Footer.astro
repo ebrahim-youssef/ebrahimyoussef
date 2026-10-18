@@ -15,6 +15,7 @@ const content = landing[locale];
 
 <footer>
   <span>{content.footer}</span>
+  <a href={localizedPath(locale, '/daftar/')}>{content.daftarLink}</a>
   <a href={localizedPath(otherLocale, path)} lang={otherLocale} hreflang={otherLocale}>{content.switchLabel}</a>
 </footer>
 

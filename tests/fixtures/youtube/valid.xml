@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns:yt="http://www.youtube.com/xml/schemas/2015" xmlns:media="http://search.yahoo.com/mrss/" xmlns="http://www.w3.org/2005/Atom">
+  <link rel="self" href="http://www.youtube.com/feeds/videos.xml?channel_id=UCcKyBs8u4-ZEkJC-Z7FdVUQ" />
+  <id>yt:channel:cKyBs8u4-ZEkJC-Z7FdVUQ</id>
+  <title>Ebrahim Youssef</title>
+  <entry>
+    <id>yt:video:uxXI5w92lDo</id>
+    <yt:videoId>uxXI5w92lDo</yt:videoId>
+    <title>سؤال اليوم #٧ | ما الميزة في الصدقة على قريبٍ محتاج؟ #shorts</title>
+    <link rel="alternate" href="https://www.youtube.com/shorts/uxXI5w92lDo" />
+    <published>2026-10-17T12:00:12+00:00</published>
+    <media:group>
+      <media:thumbnail url="https://i2.ytimg.com/vi/uxXI5w92lDo/hqdefault.jpg" />
+    </media:group>
+  </entry>
+  <entry>
+    <id>yt:video:VybsxNVT-Jo</id>
+    <yt:videoId>VybsxNVT-Jo</yt:videoId>
+    <title>الإجابة الصح مش كفاية… لازم تبقى الأسرع ⚡ | فاستبقوا</title>
+    <link rel="alternate" href="https://www.youtube.com/shorts/VybsxNVT-Jo" />
+    <published>2026-10-15T17:00:22+00:00</published>
+    <media:group>
+      <media:thumbnail url="https://i3.ytimg.com/vi/VybsxNVT-Jo/hqdefault.jpg" />
+    </media:group>
+  </entry>
+  <entry>
+    <id>yt:video:NEdqtdSP2IU</id>
+    <yt:videoId>NEdqtdSP2IU</yt:videoId>
+    <title>سؤال اليوم #٦ | أي كتاب آتاه الله لداود عليه السلام؟ #shorts</title>
+    <link rel="alternate" href="https://www.youtube.com/shorts/NEdqtdSP2IU" />
+    <published>2026-10-15T10:30:20+00:00</published>
+    <media:group>
+      <media:thumbnail url="https://i3.ytimg.com/vi/NEdqtdSP2IU/hqdefault.jpg" />
+    </media:group>
+  </entry>
+</feed>

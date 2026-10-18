@@ -54,6 +54,7 @@ interface LandingContent {
   copyFallback: string;
   nameLabel: string;
   daftarLink: string;
+  daftarSmall: string;
 }
 
 export const landing = {
@@ -95,7 +96,7 @@ export const landing = {
       { id: 'store', ar: 'متجر', name: 'Online store', who: 'AFDV Marketing · 2023', text: "An online store built from the agency's designs, with a content system the team could edit themselves and an event calendar." },
       { id: 'calendar', ar: 'تقويم', name: 'Content calendar', who: 'Freelance clients on Upwork · 2022', text: "Content calendar screens built from the client's designs, and new features added to an existing web app." },
       { id: 'quote-vault', ar: 'خزانة الاقتباسات', name: 'Quote Vault', who: 'My own app', text: 'Save and organize quotes in Arabic and English, with accounts and light and dark themes.', links: [{ label: 'Source', href: 'https://github.com/ebrahim-youssef/quote-vault' }] },
-      { id: 'figures', ar: 'من هو؟', name: 'Guess the figure', who: 'In my daftar', text: 'A guessing game about Islamic historical figures, played in Arabic or English.' },
+      { id: 'figures', ar: 'من هو؟', name: 'Guess the figure', who: 'In my daftar', text: 'A guessing game about Islamic historical figures, played in Arabic or English.', links: [{ label: 'Play it', href: '/daftar/#play' }] },
     ],
     methodTitle: 'How we work together',
     steps: [
@@ -136,6 +137,7 @@ export const landing = {
     copyFallback: 'Press Ctrl+C to copy',
     nameLabel: 'Ebrahim Youssef, written in Arabic',
     daftarLink: 'Daftar',
+    daftarSmall: 'my notebook',
   },
   ar: {
     title: 'إبراهيم يوسف، مطوّر مواقع وتطبيقات',
@@ -175,7 +177,7 @@ export const landing = {
       { id: 'store', name: 'متجر', who: 'AFDV Marketing · ٢٠٢٣', text: 'متجر إلكتروني من تصاميم الوكالة، مع نظام محتوى يعدّله الفريق بنفسه وتقويم للفعاليات.' },
       { id: 'calendar', name: 'تقويم', who: 'عملاء على Upwork · ٢٠٢٢', text: 'شاشات تقويم محتوى من تصاميم العميل، وميزات جديدة أُضيفت إلى تطبيق ويب قائم.' },
       { id: 'quote-vault', name: 'خزانة الاقتباسات', who: 'تطبيقي الخاص', text: 'احفظ اقتباساتك ونظّمها بالعربية والإنجليزية، مع حسابات ووضعين فاتح وداكن.', links: [{ label: 'الكود المصدري', href: 'https://github.com/ebrahim-youssef/quote-vault' }] },
-      { id: 'figures', name: 'من هو؟', who: 'في دفتري', text: 'لعبة تخمين عن شخصيات من التاريخ الإسلامي، بالعربية أو الإنجليزية.' },
+      { id: 'figures', name: 'من هو؟', who: 'في دفتري', text: 'لعبة تخمين عن شخصيات من التاريخ الإسلامي، بالعربية أو الإنجليزية.', links: [{ label: 'العبها', href: '/daftar/#play' }] },
     ],
     methodTitle: 'كيف نعمل معًا',
     steps: [
@@ -216,5 +218,6 @@ export const landing = {
     copyFallback: 'اضغط Ctrl+C للنسخ',
     nameLabel: 'إبراهيم يوسف، مكتوبًا بخط الرقعة',
     daftarLink: 'دفتري',
+    daftarSmall: '',
   },
 } satisfies Record<Locale, LandingContent>;

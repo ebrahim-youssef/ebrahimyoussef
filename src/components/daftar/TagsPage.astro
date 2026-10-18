@@ -1,0 +1,39 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Monogram from '../Monogram.astro';
+import { landing } from '../../data/landing';
+import type { Locale } from '../../data/locale';
+import { localizedPath } from '../../data/siteMeta';
+import { tagPath } from '../../lib/posts';
+import '../../styles/daftar.css';
+
+interface Props { locale: Locale; tags: string[]; }
+
+const { locale, tags } = Astro.props;
+const PATH = '/daftar/tags/';
+const otherLocale = locale === 'en' ? 'ar' : 'en';
+const copy = locale === 'ar'
+  ? { back: 'العودة إلى الدفتر', title: 'كل الوسوم', empty: 'لا توجد وسوم بعد.', daftar: 'دفتري' }
+  : { back: 'Back to the daftar', title: 'All tags', empty: 'No tags yet.', daftar: 'My notebook' };
+---
+
+<BaseLayout locale={locale} path={PATH} alternatePath={PATH} title={copy.title} description={copy.title}>
+  <header class="topbar">
+    <a class="mark" href={localizedPath(locale, '/')} aria-label={landing[locale].title}>
+      <Monogram size={40} />
+      <span>{locale === 'ar' ? 'إبراهيم يوسف' : 'Ebrahim Youssef'}</span>
+    </a>
+    <nav aria-label={copy.daftar}>
+      <a href={localizedPath(locale, '/daftar/')}>{copy.back}</a>
+      <a class="lang" href={localizedPath(otherLocale, PATH)} lang={otherLocale} hreflang={otherLocale}>{locale === 'ar' ? 'English' : 'العربية'}</a>
+    </nav>
+  </header>
+
+  <main id="main" class="post-page tag-page" aria-labelledby="tags-title">
+    <section class="post-shell">
+      <a class="post-back" href={localizedPath(locale, '/daftar/')}>{copy.back}</a>
+      <h1 id="tags-title">{copy.title}</h1>
+      {tags.length > 0 ? <ul class="all-tag-list">{tags.map((tag) => <li><a href={tagPath(locale, tag)}>{tag}</a></li>)}</ul> : <p>{copy.empty}</p>}
+    </section>
+  </main>
+</BaseLayout>

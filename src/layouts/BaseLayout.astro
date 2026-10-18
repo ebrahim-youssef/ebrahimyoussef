@@ -17,13 +17,25 @@ interface Props {
   path: string;
   title: string;
   description: string;
+  // null means this page has no confirmed translation and must not advertise one.
+  alternatePath?: string | null;
   // Page-specific schema.org nodes, added to the site-wide Person and WebSite graph.
   structuredData?: Record<string, unknown>[];
 }
 
-const { locale, path, title, description, structuredData = [] } = Astro.props;
+const { locale, path, title, description, alternatePath, structuredData = [] } = Astro.props;
 const otherLocale: Locale = locale === 'en' ? 'ar' : 'en';
 const canonical = `${SITE_URL}${localizedPath(locale, path)}`;
+const alternates = alternatePath === null
+  ? []
+  : alternatePath
+    ? [
+        { hreflang: locale, href: canonical },
+        { hreflang: otherLocale, href: `${SITE_URL}${localizedPath(otherLocale, alternatePath)}` },
+        { hreflang: 'x-default', href: `${SITE_URL}${locale === 'en' ? path : alternatePath}` },
+      ]
+    : alternateLinks(path);
+const feedUrl = `${SITE_URL}${locale === 'en' ? '/rss.xml' : '/ar/rss.xml'}`;
 const socialImage = `${SITE_URL}/og.png`;
 const socialImageAlt = `${SITE_NAME[locale]}, ${title}`;
 const jsonLd = {
@@ -59,7 +71,8 @@ const jsonLd = {
     <meta name="description" content={description} />
     <meta name="robots" content="index, follow" />
     <link rel="canonical" href={canonical} />
-    {alternateLinks(path).map(({ hreflang, href }) => <link rel="alternate" hreflang={hreflang} href={href} />)}
+    {alternates.map(({ hreflang, href }) => <link rel="alternate" hreflang={hreflang} href={href} />)}
+    <link rel="alternate" type="application/rss+xml" title={locale === 'ar' ? 'خلاصة الكتابات' : 'Ebrahim Youssef writing'} href={feedUrl} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="icon" href="/favicon.ico" sizes="32x32" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
