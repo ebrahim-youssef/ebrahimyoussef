@@ -1,7 +1,7 @@
 import { access, readdir, readFile } from 'node:fs/promises';
 import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { checkForbidden, checkPage, checkPdf, localizedPath, PUBLIC_PAGE_PATHS } from './buildChecks.mjs';
+import { checkFeedAlternateLink, checkForbidden, checkPage, checkPdf, checkRss, localizedPath, PUBLIC_PAGE_PATHS } from './buildChecks.mjs';
 
 const projectRoot = fileURLToPath(new URL('..', import.meta.url));
 const distRoot = join(projectRoot, 'dist');
@@ -44,11 +44,17 @@ async function readPage(relativePath, locale, path) {
   if (html !== null) {
     pageHtml.push(html);
     problems.push(...checkPage(html, { locale, path }));
+    if (path === '/daftar/') problems.push(...checkFeedAlternateLink(html, { locale }));
   }
 }
 
-const requiredFiles = ['dist/robots.txt', 'dist/og.png', 'dist/favicon.svg', 'dist/sitemap-index.xml'];
+const requiredFiles = ['dist/robots.txt', 'dist/og.png', 'dist/favicon.svg', 'dist/sitemap-index.xml', 'dist/rss.xml', 'dist/ar/rss.xml'];
 for (const relativePath of requiredFiles) await readText(relativePath);
+
+for (const [relativePath, language] of [['dist/rss.xml', 'en'], ['dist/ar/rss.xml', 'ar']]) {
+  const xml = await readText(relativePath);
+  if (xml !== null) problems.push(...checkRss(xml, { language, path: relativePath }));
+}
 
 const pages = PUBLIC_PAGE_PATHS.flatMap((path) => [
   [`dist${localizedPath('en', path)}index.html`, 'en', path],

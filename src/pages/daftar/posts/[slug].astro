@@ -1,0 +1,13 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import PostPage from '../../../components/daftar/PostPage.astro';
+import { postSlug, publishedPosts } from '../../../lib/posts';
+
+export async function getStaticPaths() {
+  const entries = publishedPosts(await getCollection('posts'), 'en');
+  const allEntries = await getCollection('posts');
+  return entries.map((entry) => ({ params: { slug: postSlug(entry.id) }, props: { entry, entries: allEntries as CollectionEntry<'posts'>[] } }));
+}
+---
+
+<PostPage locale="en" entry={Astro.props.entry} entries={Astro.props.entries} />

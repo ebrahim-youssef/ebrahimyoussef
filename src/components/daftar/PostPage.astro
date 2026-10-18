@@ -1,0 +1,102 @@
+---
+import { render, type CollectionEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Monogram from '../Monogram.astro';
+import { landing } from '../../data/landing';
+import type { Locale } from '../../data/locale';
+import { localizedPath, SITE_URL } from '../../data/siteMeta';
+import { firstParagraph, postSlug, slugify, tagPath } from '../../lib/posts';
+import '../../styles/daftar.css';
+
+interface Props {
+  locale: Locale;
+  entry: CollectionEntry<'posts'>;
+  entries: CollectionEntry<'posts'>[];
+}
+
+const { locale, entry, entries } = Astro.props;
+const otherLocale: Locale = locale === 'en' ? 'ar' : 'en';
+const path = `/daftar/posts/${postSlug(entry.id)}/`;
+const currentUrl = `${SITE_URL}${localizedPath(locale, path)}`;
+const translation = entry.data.translation
+  ? entries.find((candidate) => candidate.data.lang === otherLocale && candidate.data.draft !== true && postSlug(candidate.id) === postSlug(entry.data.translation ?? ''))
+  : undefined;
+const translationPath = translation ? `/daftar/posts/${postSlug(translation.id)}/` : undefined;
+const description = firstParagraph(entry.body, entry.data.title);
+const { Content } = await render(entry);
+const dateFormatter = new Intl.DateTimeFormat(locale === 'ar' ? 'ar-EG' : 'en-GB', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+});
+const copy = locale === 'ar'
+  ? { back: 'العودة إلى الدفتر', language: 'العربية', share: 'مشاركة', copied: 'نُسخ الرابط', fallback: 'حدّد الرابط وانسخه', translation: 'اقرأ الترجمة', daftar: 'دفتري' }
+  : { back: 'Back to the daftar', language: 'English', share: 'Share', copied: 'Link copied', fallback: 'Select and copy the link', translation: 'Read the translation', daftar: 'My notebook' };
+const structuredData = [
+  {
+    '@type': ['Article', 'BlogPosting'],
+    headline: entry.data.title,
+    description,
+    datePublished: entry.data.date.toISOString(),
+    inLanguage: locale,
+    url: currentUrl,
+    mainEntityOfPage: currentUrl,
+    author: { '@type': 'Person', name: 'Ebrahim Youssef', url: SITE_URL },
+  },
+];
+---
+
+<BaseLayout
+  locale={locale}
+  path={path}
+  alternatePath={translationPath ?? null}
+  title={entry.data.title}
+  description={description}
+  structuredData={structuredData}
+>
+  <header class="topbar">
+    <a class="mark" href={localizedPath(locale, '/')} aria-label={landing[locale].title}>
+      <Monogram size={40} />
+      <span>{locale === 'ar' ? 'إبراهيم يوسف' : 'Ebrahim Youssef'}</span>
+    </a>
+    <nav aria-label={copy.daftar}>
+      <a href={localizedPath(locale, '/daftar/')}>{copy.back}</a>
+      <a class="lang" href={translation ? localizedPath(otherLocale, translationPath ?? path) : localizedPath(otherLocale, '/daftar/')} lang={otherLocale}>
+        {locale === 'ar' ? 'English' : 'العربية'}
+      </a>
+    </nav>
+  </header>
+
+  <main id="main" class="post-page" aria-labelledby="post-title">
+    <article class="post-shell">
+      <header class="post-header">
+        <a class="post-back" href={localizedPath(locale, '/daftar/')}>{copy.back}</a>
+        <h1 id="post-title">{entry.data.title}</h1>
+        <div class="post-meta">
+          <time datetime={entry.data.date.toISOString()}>{dateFormatter.format(entry.data.date)}</time>
+          <span>{copy.language}</span>
+          {entry.data.tags.length > 0 && (
+            <ul class="post-tags" aria-label={locale === 'ar' ? 'الوسوم' : 'Tags'}>
+              {entry.data.tags.map((tag) => <li><a href={tagPath(locale, tag)}>{slugify(tag)}</a></li>)}
+            </ul>
+          )}
+        </div>
+      </header>
+      <div class="post-actions">
+        {translation && <a class="button ghost-button" href={localizedPath(otherLocale, translationPath ?? path)}>{copy.translation}</a>}
+        <a
+          class="button"
+          href={currentUrl}
+          data-share-link
+          data-copied={copy.copied}
+          data-copy-fallback={copy.fallback}
+        >{copy.share}</a>
+      </div>
+      <div class="post-prose"><Content /></div>
+    </article>
+  </main>
+</BaseLayout>
+
+<script>
+  import '../../scripts/postShare';
+</script>

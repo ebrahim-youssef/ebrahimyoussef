@@ -57,6 +57,36 @@ svg.word text { font: 700 330px var(--ruqaa); fill: transparent; stroke: var(--b
 .note b { display: block; font: 700 30px/1.25 var(--body); letter-spacing: -.02em; color: var(--ink); }
 :lang(ar) .note b { font: 700 38px/1.35 var(--ruqaa); letter-spacing: 0; }
 .note p { margin: 8px 0 0; color: var(--muted); font-size: 15px; }
+.writing-wall { --r: -1.6deg; max-width: 480px; }
+.post-teasers { list-style: none; padding: 0; margin: 0; display: grid; gap: 14px; }
+.post-teasers li { display: grid; gap: 2px; }
+.post-teasers a { color: var(--ink); font-size: 20px; font-weight: 600; text-decoration-thickness: 1px; }
+.post-teasers time { color: var(--muted); font-size: 13px; font-variant-numeric: tabular-nums; }
+.all-tags { display: inline-block; margin-block-start: 24px; color: var(--rust-ink); font-weight: 600; }
+.post-page { min-height: 100vh; padding-block: 40px 120px; padding-inline: 16px; background: var(--cream); color: var(--ink); }
+.post-shell { width: min(100%, 720px); margin-inline: auto; }
+.post-header { padding-block: 24px 28px; }
+.post-back { color: var(--rust-ink); font-size: 15px; font-weight: 600; }
+.post-header h1, .tag-page h1 { margin: 18px 0 22px; font: 700 clamp(42px, 7vw, 82px)/1.05 var(--body); letter-spacing: -.035em; text-wrap: balance; }
+:lang(ar) .post-header h1, :lang(ar) .tag-page h1 { font-family: var(--kufi); letter-spacing: 0; line-height: 1.35; }
+.post-meta { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; color: var(--muted); font-size: 15px; }
+.post-meta time { font-variant-numeric: tabular-nums; }
+.post-tags { display: flex; flex-wrap: wrap; gap: 6px; list-style: none; padding: 0; margin: 0; }
+.post-tags a { color: var(--rust-ink); }
+.post-actions { display: flex; flex-wrap: wrap; gap: 12px; padding-block: 0 44px; }
+.post-prose { max-width: 70ch; font-size: 19px; line-height: 1.75; }
+.post-prose :where(h2, h3) { margin-block: 2em .6em; font-family: var(--body); line-height: 1.2; }
+:lang(ar) .post-prose :where(h2, h3) { font-family: var(--kufi); line-height: 1.5; }
+.post-prose :where(p, ul, ol, blockquote) { margin-block: 0 1.25em; }
+.post-prose :where(ul, ol) { padding-inline-start: 1.3em; }
+.post-prose blockquote { border-inline-start: 2px solid var(--rust); padding-inline-start: 1em; color: var(--muted); }
+.post-prose img { max-width: 100%; height: auto; }
+.tag-posts { list-style: none; padding: 0; margin: 34px 0 0; display: grid; gap: 18px; }
+.tag-posts li { display: grid; gap: 3px; padding-block-end: 18px; border-block-end: 1px solid #2b211833; }
+.tag-posts a { color: var(--ink); font-size: 24px; font-weight: 600; }
+.tag-posts span { color: var(--muted); font-size: 14px; }
+.all-tag-list { display: flex; flex-wrap: wrap; gap: 12px; list-style: none; padding: 0; margin: 34px 0 0; }
+.all-tag-list a { display: inline-block; padding: 10px 14px; background: var(--paper); color: var(--rust-ink); box-shadow: 0 8px 16px -14px #000; }
 
 .rail { position: absolute; inset-inline: 7vw; inset-block-end: 34px; height: 30px; z-index: 2; mix-blend-mode: difference; color: #fff; }
 .rail::before { content: ''; position: absolute; inset-inline: 0; inset-block-start: 14px; height: 2px; background: currentColor; opacity: .5; }

@@ -1,6 +1,8 @@
 export const SITE_URL = 'https://ebrahimyoussef.com';
 export const PUBLIC_PAGE_PATHS = ['/', '/daftar/'];
 
+import { XMLParser } from 'fast-xml-parser';
+
 export function localizedPath(locale, path) {
   if (locale === 'en') return path;
   return path === '/' ? '/ar/' : `/ar${path}`;
@@ -25,6 +27,47 @@ function hasMeta(metaTags, attributeName, value) {
   });
 }
 
+export function checkFeedAlternateLink(html, { locale }) {
+  const expected = `${SITE_URL}${locale === 'en' ? '/rss.xml' : '/ar/rss.xml'}`;
+  const feedLinks = tags(html, 'link').filter((tag) => {
+    return attribute(tag, 'rel')?.toLowerCase() === 'alternate' && attribute(tag, 'type')?.toLowerCase() === 'application/rss+xml';
+  });
+
+  if (feedLinks.length !== 1 || attribute(feedLinks[0], 'href') !== expected) {
+    return [`${localizedPath(locale, '/daftar/')}: RSS alternate link must equal ${expected}`];
+  }
+  return [];
+}
+
+export function checkRss(xml, { language, path }) {
+  const problems = [];
+  let channel;
+
+  try {
+    const parsed = new XMLParser({ ignoreAttributes: false }).parse(xml);
+    if (parsed?.rss?.['@_version'] !== '2.0') problems.push(`${path}: RSS root must declare version 2.0`);
+    channel = parsed?.rss?.channel;
+  } catch {
+    problems.push(`${path}: RSS must be valid XML`);
+    return problems;
+  }
+
+  if (!channel || typeof channel !== 'object') {
+    problems.push(`${path}: RSS must contain a channel`);
+    return problems;
+  }
+  if (channel.language !== language) problems.push(`${path}: RSS language must be ${language}`);
+  if (typeof channel.title !== 'string' || !channel.title.trim()) problems.push(`${path}: RSS channel title is required`);
+  if (typeof channel.link !== 'string' || !channel.link.trim()) problems.push(`${path}: RSS channel link is required`);
+  if (typeof channel.description !== 'string' || !channel.description.trim()) problems.push(`${path}: RSS channel description is required`);
+
+  const selfLinks = Array.isArray(channel['atom:link']) ? channel['atom:link'] : [channel['atom:link']];
+  if (!selfLinks.some((link) => link?.['@_rel'] === 'self' && link?.['@_type'] === 'application/rss+xml' && typeof link?.['@_href'] === 'string')) {
+    problems.push(`${path}: RSS must contain an atom self link`);
+  }
+  return problems;
+}
+
 export function checkPage(html, { locale, path }) {
   const problems = [];
   const expectedPath = localizedPath(locale, path);
@@ -47,7 +90,7 @@ export function checkPage(html, { locale, path }) {
     ar: `${SITE_URL}${localizedPath('ar', path)}`,
     'x-default': `${SITE_URL}${localizedPath('en', path)}`,
   };
-  const alternateLinks = tags(html, 'link').filter((tag) => attribute(tag, 'rel')?.toLowerCase() === 'alternate');
+  const alternateLinks = tags(html, 'link').filter((tag) => attribute(tag, 'rel')?.toLowerCase() === 'alternate' && attribute(tag, 'hreflang'));
   if (alternateLinks.length !== 3) {
     problems.push(report(path, 'there must be exactly three hreflang alternate links'));
   }

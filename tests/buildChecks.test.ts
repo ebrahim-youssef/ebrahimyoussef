@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, test } from 'vitest';
-import { checkForbidden, checkPage, checkPdf, localizedPath as buildLocalizedPath, PUBLIC_PAGE_PATHS, SITE_URL as buildSiteUrl } from '../scripts/buildChecks.mjs';
+import { checkFeedAlternateLink, checkForbidden, checkPage, checkPdf, checkRss, localizedPath as buildLocalizedPath, PUBLIC_PAGE_PATHS, SITE_URL as buildSiteUrl } from '../scripts/buildChecks.mjs';
 import { localizedPath, SITE_URL } from '../src/data/siteMeta';
 
 const validPage = `<!doctype html>
@@ -37,6 +37,11 @@ function validPageFor(locale: 'en' | 'ar', path: string) {
 describe('checkPage', () => {
   test('accepts a page with the complete English document contract', () => {
     expect(checkPage(validPage, { locale: 'en', path: '/' })).toEqual([]);
+  });
+
+  test('does not count an RSS alternate link as hreflang metadata', () => {
+    const html = validPage.replace('</head>', '<link rel="alternate" type="application/rss+xml" href="https://ebrahimyoussef.com/rss.xml"></head>');
+    expect(checkPage(html, { locale: 'en', path: '/' })).toEqual([]);
   });
 
   test.each(PUBLIC_PAGE_PATHS.flatMap((path) => [
@@ -154,6 +159,27 @@ describe('checkForbidden', () => {
 
   test.each(['Tukh', 'طوخ', 'Qalyubia', 'القليوبية'])('rejects the town name %s', (town) => {
     expect(checkForbidden(town, 'home.html')).toHaveLength(1);
+  });
+});
+
+describe('RSS build checks', () => {
+  const feed = `<?xml version="1.0"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Writing</title><link>https://ebrahimyoussef.com/daftar/</link><description>Notes</description><language>en</language><atom:link href="https://ebrahimyoussef.com/rss.xml" rel="self" type="application/rss+xml" /></channel></rss>`;
+
+  test('accepts an English RSS 2.0 feed', () => {
+    expect(checkRss(feed, { language: 'en', path: 'dist/rss.xml' })).toEqual([]);
+  });
+
+  test('rejects a feed with the wrong language', () => {
+    expect(checkRss(feed, { language: 'ar', path: 'dist/ar/rss.xml' })).toContain('dist/ar/rss.xml: RSS language must be ar');
+  });
+
+  test('accepts the daftar feed alternate link for each locale', () => {
+    const html = '<link rel="alternate" type="application/rss+xml" href="https://ebrahimyoussef.com/rss.xml">';
+    expect(checkFeedAlternateLink(html, { locale: 'en' })).toEqual([]);
+  });
+
+  test('rejects a daftar page without the matching feed alternate link', () => {
+    expect(checkFeedAlternateLink('', { locale: 'ar' })).toEqual(['/ar/daftar/: RSS alternate link must equal https://ebrahimyoussef.com/ar/rss.xml']);
   });
 });
 

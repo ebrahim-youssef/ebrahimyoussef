@@ -19,7 +19,7 @@ export interface DaftarContent {
   walls: {
     watch: DaftarWallCopy & { more: string };
     play: DaftarWallCopy & { start: string };
-    write: DaftarWallCopy & { label: string; soon: string };
+  write: DaftarWallCopy & { label: string; soon: string; allTags: string };
   };
   railLabel: string;
   swipeHint: string;
@@ -40,7 +40,7 @@ export const daftar = {
     walls: {
       watch: { title: 'On YouTube', text: 'Short videos from building Fastabiqu, mostly in Arabic.', more: 'All videos on YouTube' },
       play: { title: 'Play', text: 'Guess the Islamic historical figure from clues, in Arabic or English. Forgiving Arabic input, streaks and share cards.', start: 'Start the game' },
-      write: { title: 'Writing', label: 'Each post is in English or Arabic, marked with its language.', text: 'Notes on building products, working in Arabic first, and what I study.', soon: 'First post soon.' },
+      write: { title: 'Writing', label: 'Each post is in English or Arabic, marked with its language.', text: 'Notes on building products, working in Arabic first, and what I study.', soon: 'First post soon.', allTags: 'Browse all tags' },
     },
     railLabel: 'Jump to a wall',
     swipeHint: 'Swipe the wall',
@@ -59,7 +59,7 @@ export const daftar = {
     walls: {
       watch: { title: 'على YouTube', text: 'مقاطع قصيرة من رحلة بناء فاستبقوا، وأغلبها بالعربية.', more: 'كل المقاطع على YouTube' },
       play: { title: 'العب', text: 'خمّن الشخصية من التاريخ الإسلامي من خلال التلميحات، بالعربية أو الإنجليزية. كتابة عربية متسامحة، وسلاسل فوز، وبطاقات للمشاركة.', start: 'ابدأ اللعبة' },
-      write: { title: 'كتابات', label: 'كل تدوينة بالعربية أو بالإنجليزية، ومكتوب عليها لغتها.', text: 'ملاحظات عن بناء المنتجات، والعمل بالعربية أولًا، وما أدرسه.', soon: 'أول تدوينة قريبًا.' },
+      write: { title: 'كتابات', label: 'كل تدوينة بالعربية أو بالإنجليزية، ومكتوب عليها لغتها.', text: 'ملاحظات عن بناء المنتجات، والعمل بالعربية أولًا، وما أدرسه.', soon: 'أول تدوينة قريبًا.', allTags: 'تصفّح كل الوسوم' },
     },
     railLabel: 'انتقل إلى جدار',
     swipeHint: 'اسحب الجدار',

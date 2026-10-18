@@ -10,6 +10,8 @@ import { landing } from '../../data/landing';
 import { localizedPath } from '../../data/siteMeta';
 import { SOCIAL_LABEL, SOCIAL_LINKS } from '../../data/social';
 import { fetchLatestVideos } from '../../lib/youtubeFeed';
+import { postPath, publishedPosts } from '../../lib/posts';
+import { getCollection } from 'astro:content';
 import GameDrawer from '../game/GameDrawer';
 import '../../styles/daftar.css';
 
@@ -23,6 +25,8 @@ const content = daftar[locale];
 const shared = landing[locale];
 const otherLocale: Locale = locale === 'en' ? 'ar' : 'en';
 const now = await getNow(locale);
+const posts = publishedPosts(await getCollection('posts'), locale);
+const latestPosts = posts.slice(0, 3);
 const videos = await fetchLatestVideos(6);
 const shortCount = videos.filter((video) => video.isShort).length;
 console.info(`Daftar watch wall fetched ${videos.length} videos (${shortCount} Shorts)`);
@@ -113,7 +117,21 @@ const motionLabel = locale === 'ar' ? 'دفتر، بخط الرقعة' : 'Daftar
                   </div>
                 )}
                 {wallId === 'write' && (
-                  <div class="clip note reveal"><b>{content.walls.write.soon}</b><p>{content.walls.write.text}</p></div>
+                  posts.length > 0 ? (
+                    <div class="clip writing-wall reveal">
+                      <ol class="post-teasers">
+                        {latestPosts.map((post) => (
+                          <li>
+                            <a href={postPath(locale, post.id)}>{post.data.title}</a>
+                            <time datetime={post.data.date.toISOString()}>{new Intl.DateTimeFormat(locale === 'ar' ? 'ar-EG' : 'en-GB', { day: 'numeric', month: 'short', year: 'numeric' }).format(post.data.date)}</time>
+                          </li>
+                        ))}
+                      </ol>
+                      <a class="all-tags" href={localizedPath(locale, '/daftar/tags/')}>{content.walls.write.allTags}</a>
+                    </div>
+                  ) : (
+                    <div class="clip note reveal"><b>{content.walls.write.soon}</b><p>{content.walls.write.text}</p></div>
+                  )
                 )}
               </div>
             </section>
